@@ -1,0 +1,24 @@
+---
+import { ctaButtons } from '../../data/nav';
+---
+
+<div class="rounded-xl border border-accent/20 bg-accent/[0.04] p-6 my-10">
+  <h3 class="text-base font-semibold text-white mb-2">Test with a small prepaid API balance.</h3>
+  <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+    RutaAPI offers prepaid API credits that can help reduce surprise exposure during testing. Check live model pricing before long tasks.
+  </p>
+  <div class="flex flex-col sm:flex-row gap-3">
+    <a
+      href={ctaButtons.primary.href}
+      class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-accent/10 border border-accent/50 text-accent font-semibold text-sm rounded-lg hover:bg-accent/20 hover:border-accent/70 transition-all hover:glow-accent-sm"
+    >
+      {ctaButtons.primary.text}
+    </a>
+    <a
+      href={ctaButtons.secondary.href}
+      class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-surface-card border border-slate-700/60 text-slate-300 font-medium text-sm rounded-lg hover:border-slate-600/80 hover:text-white hover:bg-surface-card/80 transition-all"
+    >
+      {ctaButtons.secondary.text}
+    </a>
+  </div>
+</div>

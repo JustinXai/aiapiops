@@ -1,0 +1,32 @@
+---
+import Card from '../ui/Card.astro';
+
+const cards = [
+  {
+    title: 'API keys',
+    description: 'Environment variables, server configs and tool credentials need review before use.',
+  },
+  {
+    title: 'Tool calls',
+    description: 'One agent action can trigger multiple model calls, API calls and retries.',
+  },
+  {
+    title: 'Registry trust',
+    description: 'Registry metadata helps discovery, but does not replace server review.',
+  },
+  {
+    title: 'Observability',
+    description: 'Agents need traces, usage records, request IDs and cost signals.',
+  },
+];
+---
+
+<section class="py-16 border-b border-slate-800/40 bg-surface-dark/30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      {cards.map((card) => (
+        <Card title={card.title} description={card.description} />
+      ))}
+    </div>
+  </div>
+</section>

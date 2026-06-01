@@ -1,0 +1,37 @@
+---
+import { site } from '../../data/site';
+---
+
+<footer class="border-t border-slate-800/60 bg-surface-dark">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-5 h-5 rounded bg-accent/10 border border-accent/30 flex items-center justify-center">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" class="text-accent">
+              <path d="M1.5 2.5h7M1.5 5h5M1.5 7.5h3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="text-white font-semibold text-sm">{site.name}</span>
+        </div>
+        <p class="text-slate-500 text-xs max-w-sm">
+          {site.description}
+        </p>
+        <p class="text-slate-600 text-xs mt-2">
+          Guides are for planning only. Live pricing and actual billing may vary.
+        </p>
+      </div>
+
+      <nav class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+        <a href="/mcp-server-chatgpt/" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">MCP for ChatGPT</a>
+        <a href="/mcp-registry/" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">Registry Trust</a>
+        <a href="/llm-observability/" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">Observability</a>
+        <a href="https://app.rutaapi.com/pricing" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">Pricing</a>
+      </nav>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-slate-800/40 flex items-center justify-between">
+      <span class="text-slate-600 text-xs">AI API Ops &middot; Independent developer guides for MCP and API operations.</span>
+    </div>
+  </div>
+</footer>

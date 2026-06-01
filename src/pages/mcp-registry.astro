@@ -1,0 +1,202 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'mcp-registry')!;
+
+const quickAnswerSteps = [
+  'Use registry metadata as one signal, not the only signal.',
+  'Check publisher signals: namespace, repo URL, version history.',
+  'Review install configuration, required permissions and env vars.',
+  'Inspect the server manifest and tool list before connecting.',
+  'Test with a small balance and monitor usage records.',
+];
+
+const checklistItems = [
+  'Check the publisher name and namespace on the registry entry.',
+  'Verify the repository URL links to a real, maintained codebase.',
+  'Review the server manifest for exposed tools and their purposes.',
+  'Identify required environment variables and permission scopes.',
+  'Check the install configuration for credential injection methods.',
+  'Look for known issues, recent commits and version history.',
+  'Test with a small prepaid API balance before production use.',
+];
+
+const evidenceItems = [
+  { label: 'Registry entry', value: 'registry.modelcontextprotocol.io / publisher page' },
+  { label: 'Publisher namespace', value: '@namespace/package-name pattern' },
+  { label: 'Install manifest', value: 'mcp.json or server config file' },
+  { label: 'Required permissions', value: 'scopes, env vars, tool access list' },
+  { label: 'Repo activity', value: 'GitHub commit history, issue tracker' },
+  { label: 'Usage records', value: 'Provider dashboard after install and test run' },
+];
+
+const failureModes = [
+  {
+    symptom: 'Server has a generic name and no verifiable publisher',
+    cause: 'A server published under a vague or anonymous namespace with no linked repository makes trust assessment impossible.',
+    whatToDo: 'Avoid installing servers without traceable publisher signals. Check for linked repositories and version history.',
+  },
+  {
+    symptom: 'Install config requests excessive permissions or env vars',
+    cause: 'Some servers request broad access (read all files, all env vars) as a default that is not necessary for their stated function.',
+    whatToDo: 'Review required permissions carefully. Reject unnecessary access requests and configure least-privilege scopes.',
+  },
+  {
+    symptom: 'Registry metadata is outdated but the server keeps running',
+    cause: 'Registry entries may not reflect recent changes to the server, including API key handling, tool changes or dependency updates.',
+    whatToDo: 'Periodically re-inspect the server manifest and review the linked repository for recent changes.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What is the MCP Registry?',
+    a: 'The MCP Registry is a public directory of MCP servers that have been published for discovery. It provides metadata such as server name, namespace, description, tool list and installation instructions.',
+  },
+  {
+    q: 'Does being listed in the MCP Registry mean a server is safe?',
+    a: 'No. Registry metadata is a discovery signal, not a complete security review. Always check publisher signals, tool permissions, environment variables and runtime behavior before installing.',
+  },
+  {
+    q: 'What are namespace and publisher signals in the MCP Registry?',
+    a: 'The namespace is the prefix in the package name (e.g. @company/server-name) that identifies the publisher. Publisher signals include the linked repository, version history, issue tracker and any verification badges the registry supports.',
+  },
+  {
+    q: 'How do I check if an MCP server is malicious?',
+    a: 'Review the publisher namespace, linked repository, required permissions, environment variables and tool list. Inspect the source code if possible. A malicious MCP server may leak credentials, expose sensitive files, or trigger unexpected paid API calls. Use logs, usage records, request IDs and provider dashboards together to detect anomalies.',
+  },
+  {
+    q: 'What is a malicious MCP server?',
+    a: 'A malicious MCP server is one that exposes tools designed to steal credentials, access files or data without authorization, or trigger paid API usage without clear disclosure. Even well-intentioned servers can become a risk if they mishandle environment variables or lack proper permission scoping.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'MCP for ChatGPT Apps', href: '/mcp-server-chatgpt/', desc: 'What to check before connecting tools to ChatGPT.' },
+  { label: 'LLM Observability', href: '/llm-observability/', desc: 'Trace tool calls and usage after installing a server.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="MCP Registry"
+  h1={page.h1}
+  summary="Understand how to review MCP Registry metadata, namespaces, publisher signals, install configuration and server trust before using MCP tools."
+  lastReviewed="June 2026"
+  readingTime="7 min read"
+  trackLabel="MCP Registry & Trust"
+>
+  <AISummary
+    title="Registry metadata is a discovery signal, not a safety guarantee."
+    summary="Use registry metadata to find servers, then check the publisher namespace, linked repository, install configuration, required permissions and environment variables. No single signal proves an MCP server is safe to install."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers evaluating MCP servers from the registry before installing them in ChatGPT Apps or other environments. If you are browsing the registry to find tools, this guide helps you decide which servers to trust.
+  </p>
+
+  <h2>What the MCP Registry is</h2>
+  <p>
+    The MCP Registry is a public directory that indexes MCP servers by name, namespace, description, tool list and installation method. It helps you discover what servers are available and how to install them.
+  </p>
+  <p>
+    Registry entries include metadata like the package name, publisher, version, required permissions and environment variables. This metadata is submitted by the publisher and may not be independently verified.
+  </p>
+
+  <RutaCta />
+
+  <h2>Registry metadata is not a safety guarantee</h2>
+  <p>
+    The registry helps with discovery, but it does not perform security audits on listed servers. A server can be listed without having its source code reviewed, its credential handling audited, or its tool behavior validated.
+  </p>
+  <p>
+    Treat registry metadata the same way you treat npm package metadata: useful for finding and evaluating tools, but not a substitute for your own review.
+  </p>
+
+  <h2>Namespace and publisher signals</h2>
+  <p>
+    The package namespace (e.g. <code>@company/server-name</code>) identifies the publisher. Strong publisher signals include:
+  </p>
+  <ul>
+    <li>A linked repository with an open, reviewable codebase.</li>
+    <li>Recent commit activity and a maintained issue tracker.</li>
+    <li>A verifiable publisher identity (company, individual, or known handle).</li>
+    <li>Consistent versioning and changelog updates.</li>
+  </ul>
+  <p>
+    Weak signals include: anonymous publishers, no linked repository, outdated version history, generic package names with no clear ownership.
+  </p>
+
+  <Checklist title="Publisher review checklist" items={checklistItems} />
+
+  <h2>Install configuration review</h2>
+  <p>
+    Before installing, review the install configuration. This typically includes a manifest file that specifies:
+  </p>
+  <ul>
+    <li>Required environment variables and credential names.</li>
+    <li>Permission scopes (file access, network access, tool invocation rights).</li>
+    <li>Dependencies and their sources.</li>
+    <li>How the server is started and what it connects to.</li>
+  </ul>
+  <p>
+    If the configuration requests broad access that seems unnecessary for the stated purpose, question it. A server that needs read access to all environment variables to function is a higher risk than one that only needs a specific API key.
+  </p>
+
+  <h2>Malicious or low-trust server risks</h2>
+  <p>
+    A malicious MCP server can expose credentials, access files, or trigger paid API usage without clear disclosure. Even servers from legitimate publishers can become risky if they:
+  </p>
+  <ul>
+    <li>Log environment variables during startup or in error messages.</li>
+    <li>Request more permissions than needed for their function.</li>
+    <li>Have outdated dependencies with known vulnerabilities.</li>
+    <li>Change behavior between versions without clear changelog notes.</li>
+  </ul>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>API key and secret exposure</h2>
+  <p>
+    If an MCP server requires API keys or secrets, check how those credentials are injected and stored. Plain-text environment variables set globally can be read by other servers sharing the same process. Credentials in config files may be committed to version control or left accessible.
+  </p>
+  <p>
+    Review the server documentation for credential handling guidance. Where possible, use scoped credentials managers or per-server environment namespaces.
+  </p>
+
+  <h2>Evidence to inspect</h2>
+  <EvidenceList items={evidenceItems} />
+
+  <h2>When to test with a small prepaid API balance</h2>
+  <p>
+    After reviewing the registry metadata and server configuration, run a test install with a small prepaid API balance. This helps you verify the server behaves as documented and understand its actual usage patterns before connecting it to production workflows.
+  </p>
+  <p>
+    Prepaid credits can help reduce surprise exposure during testing. Monitor usage records and request IDs during the test run to compare against expected behavior.
+  </p>
+
+  <h2>How RutaAPI fits</h2>
+  <p>
+    RutaAPI offers prepaid API credits that can be useful when testing MCP server behavior and usage patterns. Verify live model pricing and check the <code>/v1/models</code> endpoint for model visibility before running multi-step tests. Actual billing may vary.
+  </p>
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>

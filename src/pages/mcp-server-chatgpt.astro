@@ -1,0 +1,183 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'mcp-server-chatgpt')!;
+
+const quickAnswerSteps = [
+  'Review the MCP server manifest and tool list before connecting.',
+  'Check how API keys or credentials are passed to the server.',
+  'Inspect environment variables and server configuration.',
+  'Limit tool permissions to the minimum required set.',
+  'Trace tool calls and monitor API usage before scaling.',
+];
+
+const checklistItems = [
+  'Check the publisher and repository URL of the MCP server.',
+  'Review the server manifest for exposed tools and their purposes.',
+  'Identify how API keys or secrets are injected (env vars, config files, credentials manager).',
+  'Understand what each tool does before giving it access.',
+  'Set up usage monitoring before the first long-running workflow.',
+  'Test with a small prepaid API balance first.',
+];
+
+const evidenceItems = [
+  { label: 'Server manifest', value: 'npx @modelcontextprotocol/server-* inspect' },
+  { label: 'Env vars', value: 'env | grep -i key / echo $MCP_API_KEY' },
+  { label: 'Tool list', value: 'MCP manifest tools[] array' },
+  { label: 'Usage logs', value: 'Provider dashboard or RutaAPI usage records' },
+];
+
+const failureModes = [
+  {
+    symptom: 'API key leaked in server logs or environment',
+    cause: 'The MCP server prints environment variables or stores credentials in a config file accessible to other tools.',
+    whatToDo: 'Review server source code before installation. Use credentials managers instead of plain env vars where possible.',
+  },
+  {
+    symptom: 'Unexpected tool calls during a single user request',
+    cause: 'An agent loop or retry causes multiple tool invocations, each triggering API calls and costs.',
+    whatToDo: 'Set per-request tool call limits and monitor usage records for spikes.',
+  },
+  {
+    symptom: 'Server uses a different API key than expected',
+    cause: 'The server reads from a shared environment variable set by another tool or process.',
+    whatToDo: 'Namespace env vars per server and verify which key each server is actually using.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What is an MCP server for ChatGPT?',
+    a: 'An MCP server (Model Context Protocol server) exposes tools and resources that ChatGPT Apps can call during a conversation. It acts as a bridge between the ChatGPT session and external services, APIs or data sources.',
+  },
+  {
+    q: 'Are MCP servers for ChatGPT safe to use?',
+    a: 'MCP security depends on server trust, environment variables, tool permissions and prompt-injection risk. Registry metadata is a discovery signal, not a complete security review. Always check publisher signals, tool permissions and runtime behavior.',
+  },
+  {
+    q: 'How do API keys work with MCP servers?',
+    a: 'MCP servers typically receive API keys through environment variables, configuration files or credentials managers. The key handling approach matters: plain-text env vars can be logged or exposed. Review the server configuration before connecting.',
+  },
+  {
+    q: 'Can tool calls in an MCP server trigger unexpected costs?',
+    a: 'Yes. One agent action can trigger multiple tool calls, and each tool call can generate API requests, retries and usage events. Monitor usage records and request IDs to understand the cost surface before running long workflows.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'MCP Registry & Trust', href: '/mcp-registry/', desc: 'How to review registry metadata before installing.' },
+  { label: 'LLM Observability', href: '/llm-observability/', desc: 'Trace tool calls, usage records and cost signals.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="MCP for ChatGPT"
+  h1={page.h1}
+  summary="Learn what to check before connecting MCP servers to ChatGPT Apps, including API keys, tool permissions, environment variables, usage and billing risk."
+  lastReviewed="June 2026"
+  readingTime="6 min read"
+  trackLabel="MCP for ChatGPT"
+>
+  <AISummary
+    title="No single check proves an MCP server is safe to connect."
+    summary="Review the server manifest, tool permissions, API key handling, environment variables and usage logs together. MCP security depends on server trust, env vars, tool permissions and prompt-injection risk."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers building ChatGPT Apps that connect to external tools, APIs or data sources through an MCP server. If you are connecting third-party tools or even internal servers, the same trust review applies.
+  </p>
+
+  <h2>What an MCP server does in ChatGPT Apps</h2>
+  <p>
+    When you connect an MCP server to ChatGPT Apps, the model can call tools exposed by that server during a conversation. Each tool invocation triggers an API call, which may count toward usage and billing.
+  </p>
+  <p>
+    The server acts as the runtime layer: it receives tool call requests from the model and returns results. It can also read environment variables, access local files, call external APIs, or pass credentials on your behalf.
+  </p>
+  <p>
+    Because the server operates with your credentials, understanding its configuration matters before you give it access.
+  </p>
+
+  <RutaCta />
+
+  <h2>Trust boundary checklist</h2>
+  <p>
+    Before connecting any MCP server to ChatGPT Apps, run through this checklist. Each item reduces the risk of unexpected credential exposure, tool misuse or billing surprises.
+  </p>
+  <Checklist title="Trust boundary checklist" items={checklistItems} />
+
+  <h2>API key and environment variable risks</h2>
+  <p>
+    MCP servers often receive API keys or other secrets through environment variables. This is a common pattern, but it has risks worth understanding.
+  </p>
+  <ul>
+    <li><strong>Logging risk:</strong> Some servers print environment variables during startup or in verbose mode, potentially exposing keys in logs.</li>
+    <li><strong>Shared scope:</strong> If multiple servers share the same env var namespace, one server may read keys intended for another.</li>
+    <li><strong>Config files:</strong> Credentials stored in config files may be committed to version control or left in accessible locations.</li>
+    <li><strong>Install-time injection:</strong> Some tools inject API keys during installation or setup, which may not match your intended configuration.</li>
+  </ul>
+  <p>
+    Review the server documentation and, if possible, inspect the source code to understand how credentials are handled. When in doubt, use a credentials manager or scoped env vars per server.
+  </p>
+
+  <h2>Tool call and usage impact</h2>
+  <p>
+    Each tool exposed by an MCP server can be invoked by the model during a conversation. A single user request may trigger multiple tool calls, and each one generates API traffic.
+  </p>
+  <ul>
+    <li>One tool call can generate multiple API requests if retries are involved.</li>
+    <li>Agent loops or repeated prompts can cause the same tool to be called multiple times.</li>
+    <li>Tool calls that fetch data may return large payloads, increasing token usage.</li>
+    <li>Real-time monitoring during a session helps catch unexpected usage spikes.</li>
+  </ul>
+  <p>
+    Compare usage records with request IDs to understand what triggered each charge. Test with a small balance before running long or automated workflows.
+  </p>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>Evidence to inspect</h2>
+  <p>
+    When reviewing an MCP server, these are the signals to look for. Tools and environment states change, so check at installation time and periodically during use.
+  </p>
+  <EvidenceList items={evidenceItems} />
+
+  <h2>When to test with a small prepaid API balance</h2>
+  <p>
+    If you are planning a multi-step workflow or connecting to a new MCP server for the first time, run a short test with a small prepaid API balance. This helps you understand:
+  </p>
+  <ul>
+    <li>How many API calls your workflow actually generates per user request.</li>
+    <li>Whether tool calls behave as expected under real conditions.</li>
+    <li>How usage records and billing events appear in your dashboard.</li>
+  </ul>
+  <p>
+    Prepaid credits can help reduce surprise exposure during testing. Verify model availability and pricing with the provider before long tasks. Actual billing may vary based on usage patterns.
+  </p>
+
+  <h2>How RutaAPI fits</h2>
+  <p>
+    RutaAPI offers prepaid API credits that can be used with compatible model endpoints. Testing with a small balance before scaling agent workflows may help reduce unexpected billing exposure. Check live model pricing and verify model visibility with <code>/v1/models</code> where supported.
+  </p>
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>

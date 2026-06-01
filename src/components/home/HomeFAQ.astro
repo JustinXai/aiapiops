@@ -1,0 +1,76 @@
+---
+const faqs = [
+  {
+    q: 'Is AI API Ops an official RutaAPI documentation site?',
+    a: 'No. It is an independent guide site that links to RutaAPI when prepaid API testing is relevant.',
+  },
+  {
+    q: 'Should I trust every MCP server in a registry?',
+    a: 'No. Registry metadata can help discovery, but you still need to review publisher signals, tool permissions, environment variables and runtime behavior.',
+  },
+  {
+    q: 'Why does observability matter for agent workflows?',
+    a: 'Agents can retry, call tools and trigger paid API usage. Logs, traces, usage records and request IDs help explain what happened.',
+  },
+];
+---
+
+<section class="py-20 border-b border-slate-800/40">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-10">FAQ</h2>
+
+    <div class="space-y-4">
+      {faqs.map((faq, i) => (
+        <div class="rounded-xl border border-slate-800/60 bg-surface-card/50 overflow-hidden" data-faq-item>
+          <button
+            class="w-full flex items-center justify-between px-5 py-4 text-left group"
+            data-faq-btn
+          >
+            <span class="text-sm font-medium text-slate-200 group-hover:text-white transition-colors pr-4">{faq.q}</span>
+            <svg
+              width="16" height="16" viewBox="0 0 16 16" fill="none"
+              class="text-slate-500 flex-shrink-0 transition-transform duration-200"
+              data-faq-icon
+            >
+              <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="hidden px-5 pb-5" data-faq-answer>
+            <p class="text-xs text-slate-400 leading-relaxed">{faq.a}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqs.map(faq => ({
+        "@type": "Question",
+        "name": faq.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.a,
+        },
+      })),
+    })} />
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('[data-faq-item]').forEach(item => {
+    const btn = item.querySelector('[data-faq-btn]');
+    const answer = item.querySelector('[data-faq-answer]');
+    const icon = item.querySelector('[data-faq-icon]');
+
+    btn?.addEventListener('click', () => {
+      const isOpen = !answer?.classList.contains('hidden');
+      document.querySelectorAll('[data-faq-answer]').forEach(a => a.classList.add('hidden'));
+      document.querySelectorAll('[data-faq-icon]').forEach(ic => ic.style.transform = '');
+      if (!isOpen) {
+        answer?.classList.remove('hidden');
+        icon!.style.transform = 'rotate(180deg)';
+      }
+    });
+  });
+</script>

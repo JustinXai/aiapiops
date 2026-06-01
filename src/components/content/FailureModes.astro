@@ -1,0 +1,27 @@
+---
+interface Props {
+  modes: { symptom: string; cause: string; whatToDo: string }[];
+}
+
+const { modes } = Astro.props;
+---
+
+<div class="rounded-xl border border-amber-900/30 bg-amber-950/20 p-5 mb-6">
+  <div class="flex items-center gap-2 mb-4">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="text-amber-400">
+      <path d="M7 1L13 12H1L7 1Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M7 5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="7" cy="10" r="0.5" fill="currentColor"/>
+    </svg>
+    <span class="text-[10px] font-mono text-amber-400/70 uppercase tracking-wider">Common failure modes</span>
+  </div>
+  <div class="space-y-4">
+    {modes.map(mode => (
+      <div class="border-l-2 border-amber-900/40 pl-3">
+        <p class="text-xs font-semibold text-amber-200/80 mb-1">{mode.symptom}</p>
+        <p class="text-[11px] text-slate-400 mb-1.5">{mode.cause}</p>
+        <p class="text-[11px] text-slate-500">{mode.whatToDo}</p>
+      </div>
+    ))}
+  </div>
+</div>

@@ -1,0 +1,39 @@
+---
+interface Props {
+  lines: string[];
+  title?: string;
+}
+
+const { lines, title = 'terminal' } = Astro.props;
+---
+
+<div class="font-mono text-xs rounded-lg border border-slate-700/60 bg-primary-bg overflow-hidden">
+  <div class="flex items-center gap-1.5 px-3 py-2 border-b border-slate-700/40 bg-surface-dark/50">
+    <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+    <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+    <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+    <span class="ml-2 text-slate-500 text-[10px]">{title}</span>
+  </div>
+  <div class="px-4 py-3 space-y-1">
+    {lines.map((line) => {
+      const trimmed = line.startsWith('$ ') ? line.substring(2) : line;
+      const isCommand = line.startsWith('$ ');
+      const isOk = line.startsWith('ok ');
+      const isWarn = line.startsWith('warn ');
+      const isCheck = line.startsWith('check ');
+
+      let colorClass = 'text-slate-300';
+      if (isCommand) colorClass = 'text-slate-400';
+      if (isOk) colorClass = 'text-emerald-400';
+      if (isWarn) colorClass = 'text-amber-400';
+      if (isCheck) colorClass = 'text-slate-400';
+
+      return (
+        <div class="flex gap-2">
+          {isCommand && <span class="text-slate-500 select-none">&gt;</span>}
+          <span class={colorClass}>{trimmed}</span>
+        </div>
+      );
+    })}
+  </div>
+</div>

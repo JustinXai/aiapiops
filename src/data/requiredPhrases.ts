@@ -1,0 +1,30 @@
+export const requiredPhrases = {
+  'mcp-server-chatgpt': [
+    'chatgpt mcp server',
+    'mcp server for chatgpt',
+    'chatgpt apps',
+    'api keys',
+    'tool calls',
+    'usage and billing',
+    'small prepaid api balance',
+  ],
+  'mcp-registry': [
+    'mcp registry',
+    'mcp server registry',
+    'mcp server trust',
+    'server metadata',
+    'namespace',
+    'install configuration',
+    'malicious mcp server',
+  ],
+  'llm-observability': [
+    'llm observability',
+    'ai agent monitoring',
+    'tool calls',
+    'retries',
+    'request ids',
+    'usage records',
+    'token usage',
+    'billing deltas',
+  ],
+};

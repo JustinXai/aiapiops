@@ -1,0 +1,40 @@
+---
+import SectionLabel from '../ui/SectionLabel.astro';
+
+interface Props {
+  category: string;
+  h1: string;
+  summary: string;
+  lastReviewed: string;
+  readingTime: string;
+  trackLabel: string;
+}
+
+const { category, h1, summary, lastReviewed, readingTime, trackLabel } = Astro.props;
+---
+
+<div class="border-b border-slate-800/40 bg-gradient-to-b from-primary-bg to-surface-dark/30">
+  <div class="max-w-[820px] mx-auto px-4 sm:px-6 lg:px-8 py-14">
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 flex-wrap">
+        <SectionLabel label={category} variant="muted" />
+        <span class="text-slate-700">/</span>
+        <span class="text-xs font-mono text-slate-500">{trackLabel}</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight tracking-tight max-w-3xl">
+        {h1}
+      </h1>
+
+      <p class="text-base text-slate-400 max-w-2xl leading-relaxed">
+        {summary}
+      </p>
+
+      <div class="flex items-center gap-4 text-xs text-slate-500 font-mono pt-1">
+        <span>Last reviewed: {lastReviewed}</span>
+        <span class="text-slate-700">/</span>
+        <span>{readingTime}</span>
+      </div>
+    </div>
+  </div>
+</div>

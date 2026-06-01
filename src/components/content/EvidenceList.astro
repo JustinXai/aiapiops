@@ -1,0 +1,26 @@
+---
+interface Props {
+  title?: string;
+  items: { label: string; value: string }[];
+}
+
+const { title, items } = Astro.props;
+---
+
+<div class="rounded-xl border border-slate-700/50 bg-surface-card/50 p-5 mb-6">
+  <div class="flex items-center gap-2 mb-4">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="text-slate-400">
+      <path d="M7 1L7 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M1 7L13 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{title || 'Evidence to inspect'}</span>
+  </div>
+  <dl class="space-y-2">
+    {items.map(item => (
+      <div class="flex items-start gap-3">
+        <dt class="text-[10px] font-mono text-slate-500 w-28 flex-shrink-0 pt-0.5">{item.label}</dt>
+        <dd class="text-xs text-slate-300 font-mono">{item.value}</dd>
+      </div>
+    ))}
+  </dl>
+</div>

@@ -1,0 +1,66 @@
+---
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import '../../styles/global.css';
+
+interface Props {
+  title: string;
+  metaDescription: string;
+  canonical: string;
+  ogTitle: string;
+  ogDescription: string;
+  breadcrumb?: { label: string; url: string }[];
+}
+
+const {
+  title,
+  metaDescription,
+  canonical,
+  ogTitle,
+  ogDescription,
+  breadcrumb = [],
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="AI API Ops" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={ogDescription} />
+
+    {breadcrumb.length > 0 && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumb.map((item, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "name": item.label,
+          "item": item.url,
+        })),
+      })} />
+    )}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen flex flex-col bg-primary-bg text-slate-300">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,84 @@
+---
+import { site } from '../../data/site';
+import { navLinks, ctaButtons } from '../../data/nav';
+---
+
+<header class="sticky top-0 z-50 border-b border-slate-800/60 bg-primary-bg/95 backdrop-blur-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-8">
+        <a href="/" class="flex items-center gap-2 group">
+          <div class="w-7 h-7 rounded bg-accent/10 border border-accent/30 flex items-center justify-center group-hover:glow-accent-sm transition-all">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="text-accent">
+              <path d="M2 3h10M2 7h7M2 11h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <span class="text-white font-semibold text-sm tracking-tight">{site.name}</span>
+            <span class="hidden sm:inline text-slate-500 text-xs ml-2">{site.tagline}</span>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-1">
+          {navLinks.map(link => (
+            <a
+              href={link.href}
+              class="px-3 py-1.5 text-sm text-slate-400 hover:text-slate-200 rounded-md hover:bg-white/5 transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a
+          href={ctaButtons.primary.href}
+          class="hidden sm:inline-flex items-center gap-1.5 px-4 py-1.5 bg-accent/10 border border-accent/40 text-accent text-sm font-medium rounded-md hover:bg-accent/20 hover:border-accent/60 transition-all hover:glow-accent-sm"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 1L6 10M1 6L10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          {ctaButtons.primary.text.split('—')[0].trim()}
+        </a>
+
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden p-2 text-slate-400 hover:text-slate-200 rounded-md hover:bg-white/5 transition-colors"
+          aria-label="Toggle menu"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800/60 bg-primary-bg/98">
+    <nav class="px-4 py-3 space-y-1">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class="block px-3 py-2 text-sm text-slate-400 hover:text-slate-200 rounded-md hover:bg-white/5 transition-colors"
+        >
+          {link.label}
+        </a>
+      ))}
+      <a
+        href={ctaButtons.primary.href}
+        class="block px-3 py-2 mt-2 text-sm text-accent font-medium rounded-md bg-accent/10 border border-accent/30"
+      >
+        {ctaButtons.primary.text}
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>

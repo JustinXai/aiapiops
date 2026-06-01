@@ -1,0 +1,28 @@
+---
+import SiteShell from '../components/layout/SiteShell.astro';
+import Hero from '../components/home/Hero.astro';
+import ProblemCards from '../components/home/ProblemCards.astro';
+import CoreTracks from '../components/home/CoreTracks.astro';
+import GuidePreview from '../components/home/GuidePreview.astro';
+import RutaTestingCta from '../components/home/RutaTestingCta.astro';
+import HomeFAQ from '../components/home/HomeFAQ.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages[0];
+---
+
+<SiteShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+>
+  <Hero />
+  <ProblemCards />
+  <CoreTracks />
+  <GuidePreview />
+  <RutaTestingCta />
+  <HomeFAQ />
+</SiteShell>

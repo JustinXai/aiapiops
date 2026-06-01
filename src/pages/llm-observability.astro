@@ -1,0 +1,198 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'llm-observability')!;
+
+const quickAnswerSteps = [
+  'Instrument key traces: model requests, tool calls, handoffs.',
+  'Collect usage records and request IDs for each API call.',
+  'Track token usage per request and aggregate across sessions.',
+  'Compare billing deltas against expected usage patterns.',
+  'Set alerts for anomalous usage spikes before scaling.',
+];
+
+const checklistItems = [
+  'Log request IDs from every model API call for correlation.',
+  'Record tool call events: which tool, when, with what inputs.',
+  'Track token usage (input + output) per request and per session.',
+  'Monitor retry events and failed handoffs.',
+  'Compare usage records against expected cost models.',
+  'Set usage thresholds and alert on anomaly.',
+  'Correlate logs with provider billing dashboards.',
+];
+
+const evidenceItems = [
+  { label: 'Request ID', value: 'X-Request-ID or response id field' },
+  { label: 'Token usage', value: 'usage.prompt_tokens + usage.completion_tokens per call' },
+  { label: 'Tool call log', value: 'tool name, input size, call timestamp, result size' },
+  { label: 'Retry events', value: 'HTTP 429 or 5xx with backoff records' },
+  { label: 'Billing delta', value: 'Provider dashboard usage - expected baseline' },
+];
+
+const failureModes = [
+  {
+    symptom: 'Usage records show charges but no corresponding request IDs',
+    cause: 'Billing events may be aggregated or delayed. Without request IDs, correlating charges to specific calls is difficult.',
+    whatToDo: 'Log request IDs at call time and retain them for at least the billing period. Compare against provider usage exports.',
+  },
+  {
+    symptom: 'Token usage spikes without a clear cause',
+    cause: 'Agent loops, repeated context windows, or large tool responses can cause unexpected token growth.',
+    whatToDo: 'Trace token usage per tool call and per session. Identify which tool or workflow step generated the spike.',
+  },
+  {
+    symptom: 'Agent retries generate multiple paid calls',
+    cause: 'Retry logic that re-sends the full context window may trigger duplicate charges per retry attempt.',
+    whatToDo: 'Implement idempotency keys and log retry events separately from initial calls. Monitor usage records for duplicate patterns.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What does LLM observability mean for AI agents?',
+    a: 'LLM observability for AI agents means tracking model calls, tool calls, retries, latency, token usage and billing deltas throughout an agent workflow. It helps you understand what happened when something goes wrong or costs more than expected.',
+  },
+  {
+    q: 'Why are request IDs important for LLM observability?',
+    a: 'Request IDs let you correlate model responses with usage records and billing events. Without request IDs, it is difficult to trace a specific charge back to a specific call, especially in multi-step agent workflows.',
+  },
+  {
+    q: 'How do tool calls affect LLM observability?',
+    a: 'Tool calls add API traffic beyond the base model calls. Each tool invocation generates its own request and response. If a tool calls external APIs or fetches large payloads, it can significantly increase token usage and costs.',
+  },
+  {
+    q: 'How can I detect billing deltas early?',
+    a: 'Track token usage per request and compare against expected baselines. Set usage thresholds and alerts. Compare provider billing dashboards against your own usage logs. Use logs, usage records, request IDs and provider dashboards together.',
+  },
+  {
+    q: 'What role do retries play in LLM observability?',
+    a: 'Retries can generate multiple API calls per intended action. If an agent retries on errors, each retry attempt may trigger a full model call with the same context window. Monitoring retry events helps identify where duplicate charges are occurring.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'MCP for ChatGPT Apps', href: '/mcp-server-chatgpt/', desc: 'Tool call behavior and usage impact.' },
+  { label: 'MCP Registry & Trust', href: '/mcp-registry/', desc: 'Server trust review before connecting tools.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="LLM Observability"
+  h1={page.h1}
+  summary="Learn how LLM observability helps trace model calls, tool calls, retries, request IDs, latency, token usage and billing deltas in AI agent workflows."
+  lastReviewed="June 2026"
+  readingTime="7 min read"
+  trackLabel="LLM Observability"
+>
+  <AISummary
+    title="Agents need traces, usage records and request IDs to explain what happened."
+    summary="LLM observability means tracking model calls, tool calls, retries, latency, token usage and billing deltas. Use logs, usage records, request IDs and provider dashboards together. Test with a small balance before scaling."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers building AI agents or ChatGPT Apps that make multiple model calls, use tools, handle retries or run automated workflows. If you are scaling agent operations, observability helps you understand and control cost exposure.
+  </p>
+
+  <h2>What LLM observability means</h2>
+  <p>
+    LLM observability is the practice of instrumenting and monitoring AI agent workflows so you can answer: what happened, why did it happen, and what did it cost?
+  </p>
+  <p>
+    Unlike traditional application monitoring, LLM observability faces unique challenges: long context windows, probabilistic outputs, tool call chains, and billing that accrues per token. Without proper instrumentation, it is difficult to understand cost drivers or diagnose unexpected behavior.
+  </p>
+  <p>
+    The core signals to track are: model request/response pairs, tool call events, token usage, request IDs, latency, retries and billing deltas.
+  </p>
+
+  <RutaCta />
+
+  <h2>What to trace in agent workflows</h2>
+  <p>
+    Every agent workflow has observable events that matter for understanding behavior and cost. At minimum, track:
+  </p>
+  <ul>
+    <li><strong>Model calls:</strong> Request ID, model name, input tokens, output tokens, latency, timestamp.</li>
+    <li><strong>Tool calls:</strong> Tool name, call arguments (sanitized), response size, error status.</li>
+    <li><strong>Handoffs:</strong> Which agent or step received the output, what was passed forward.</li>
+    <li><strong>Usage aggregation:</strong> Total tokens per session, per user, per workflow step.</li>
+  </ul>
+
+  <Checklist title="Observability checklist" items={checklistItems} />
+
+  <h2>Tool calls, retries and handoffs</h2>
+  <p>
+    Tool calls introduce complexity into observability. Each tool invocation generates API traffic beyond the base model call, and the results feed back into the context for the next step.
+  </p>
+  <p>
+    Retries compound this: if an agent retries on a timeout or rate limit, each retry attempt may resend the full context window. This means one failed action can generate multiple paid calls.
+  </p>
+  <p>
+    Handoffs between agent steps also matter: the output of one step becomes the input of the next. If a tool returns a large payload, it can grow the context window significantly across multiple steps.
+  </p>
+  <p>
+    Instrumenting these events lets you see exactly where usage is accumulating and identify which steps or tools are cost drivers.
+  </p>
+
+  <h2>Usage records and request IDs</h2>
+  <p>
+    Usage records from the model provider show token consumption per API call. Request IDs let you match those records to specific calls in your own logs.
+  </p>
+  <p>
+    Without request IDs, it is difficult to correlate provider billing events to your own call logs. This matters especially when debugging unexpected charges or comparing actual usage to expected baselines.
+  </p>
+  <p>
+    Best practice: capture the request ID at call time and include it in your own logs. Store it alongside the usage record so you can trace any billing event back to the originating call.
+  </p>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>Token usage and cost drift</h2>
+  <p>
+    Token usage is the primary driver of LLM API costs. Track it at multiple levels:
+  </p>
+  <ul>
+    <li><strong>Per request:</strong> Input tokens + output tokens. Compare against expected size for the task type.</li>
+    <li><strong>Per session:</strong> Aggregate tokens across all calls in a user session or workflow run.</li>
+    <li><strong>Per tool:</strong> Which tools generate the most token overhead through their inputs or returned payloads?</li>
+  </ul>
+  <p>
+    Cost drift occurs when actual usage exceeds expected usage. Common causes include: context window growth from accumulated tool responses, repeated retries, unexpected long outputs, and token overhead from system prompts.
+  </p>
+
+  <h2>Evidence to inspect</h2>
+  <EvidenceList items={evidenceItems} />
+
+  <h2>When to test with a small prepaid API balance</h2>
+  <p>
+    Before scaling an agent workflow, run it end-to-end with a small prepaid API balance. Compare your own usage logs against the provider billing records to verify your cost assumptions.
+  </p>
+  <p>
+    Prepaid credits can help reduce surprise exposure during testing. This is especially important for multi-step workflows where tool call chains can cause token usage to grow unexpectedly across steps.
+  </p>
+
+  <h2>How RutaAPI fits</h2>
+  <p>
+    RutaAPI offers prepaid API credits that allow you to run test workloads and compare usage records before committing to larger scale. Verify model availability and pricing, and check the <code>/v1/models</code> endpoint where supported. Use logs, usage records, request IDs and provider dashboards together.
+  </p>
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>

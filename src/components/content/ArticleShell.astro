@@ -1,0 +1,140 @@
+---
+import SiteShell from '../layout/SiteShell.astro';
+import ArticleHeader from './ArticleHeader.astro';
+import { ctaButtons } from '../../data/nav';
+
+interface Props {
+  title: string;
+  metaDescription: string;
+  canonical: string;
+  ogTitle: string;
+  ogDescription: string;
+  breadcrumb?: { label: string; url: string }[];
+  category: string;
+  h1: string;
+  summary: string;
+  lastReviewed: string;
+  readingTime: string;
+  trackLabel: string;
+}
+
+const {
+  title,
+  metaDescription,
+  canonical,
+  ogTitle,
+  ogDescription,
+  breadcrumb,
+  category,
+  h1,
+  summary,
+  lastReviewed,
+  readingTime,
+  trackLabel,
+} = Astro.props;
+---
+
+<SiteShell
+  title={title}
+  metaDescription={metaDescription}
+  canonical={canonical}
+  ogTitle={ogTitle}
+  ogDescription={ogDescription}
+  breadcrumb={breadcrumb}
+>
+  <article class="pb-20">
+    <ArticleHeader
+      category={category}
+      h1={h1}
+      summary={summary}
+      lastReviewed={lastReviewed}
+      readingTime={readingTime}
+      trackLabel={trackLabel}
+    />
+
+    <div class="max-w-[820px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mt-10 prose prose-invert prose-slate prose-sm max-w-none">
+        <slot />
+      </div>
+    </div>
+  </article>
+</SiteShell>
+
+<style>
+  .prose h2 {
+    color: #f1f5f9;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .prose h3 {
+    color: #e2e8f0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .prose p {
+    color: #94a3b8;
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+    font-size: 0.9375rem;
+  }
+
+  .prose ul {
+    color: #94a3b8;
+    margin-bottom: 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .prose ul li {
+    margin-bottom: 0.5rem;
+    line-height: 1.65;
+  }
+
+  .prose li::marker {
+    color: #6EE7B7;
+  }
+
+  .prose strong {
+    color: #e2e8f0;
+    font-weight: 600;
+  }
+
+  .prose code {
+    background: #0F172A;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+    font-family: 'JetBrains Mono', Menlo, monospace;
+    font-size: 0.875em;
+    color: #6EE7B7;
+  }
+
+  .prose pre {
+    background: #0F172A;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .prose pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #e2e8f0;
+    font-size: 0.8125rem;
+  }
+
+  .prose hr {
+    border-color: #1e293b;
+    margin: 2.5rem 0;
+  }
+</style>

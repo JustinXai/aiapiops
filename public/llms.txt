@@ -1,0 +1,16 @@
+AI API Ops — Independent developer guides for MCP and API operations.
+
+https://aiapiops.com/
+Homepage: Run AI apps with fewer API surprises.
+
+https://aiapiops.com/mcp-server-chatgpt/
+MCP Server for ChatGPT: What to Check Before Connecting Tools
+Learn what to check before connecting MCP servers to ChatGPT Apps, including API keys, tool permissions, environment variables, usage and billing risk.
+
+https://aiapiops.com/mcp-registry/
+MCP Registry Trust: What to Check Before Installing Servers
+Understand how to review MCP Registry metadata, namespaces, publisher signals, install configuration and server trust before using MCP tools.
+
+https://aiapiops.com/llm-observability/
+LLM Observability for AI Agents: What to Trace Before Scaling
+Learn how LLM observability helps trace model calls, tool calls, retries, request IDs, latency, token usage and billing deltas in AI agent workflows.

@@ -1,0 +1,25 @@
+{
+  "name": "ai-api-ops",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check:content": "node scripts/check-content.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "check:claims": "node scripts/check-claims.mjs",
+    "check:seo": "node scripts/check-seo.mjs",
+    "check:jsonld": "node scripts/check-jsonld.mjs",
+    "check:public-pages": "node scripts/check-public-pages.mjs",
+    "verify": "npm run build && npm run check:public-pages && npm run check:content && npm run check:links && npm run check:claims && npm run check:seo && npm run check:jsonld"
+  },
+  "dependencies": {
+    "astro": "^5.6.1"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3"
+  }
+}
