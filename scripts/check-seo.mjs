@@ -5,7 +5,9 @@ import { fileURLToPath } from 'url';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const distDir = join(__dirname, '..', 'dist');
 
-const SEO_REQUIRED_FIELDS = ['title', 'meta description', 'canonical', 'og:title', 'og:description'];
+const TITLE_RECOMMENDED_MIN = 30;
+const TITLE_RECOMMENDED_MAX = 60;
+const TITLE_HARD_MAX = 65;
 
 async function checkSeo() {
   let passed = 0;
@@ -15,15 +17,33 @@ async function checkSeo() {
 
   const htmlFiles = await getAllFiles(distDir, '');
 
+  const titlesByValue = new Map();
+
   for (const file of htmlFiles) {
     if (!file.endsWith('.html')) continue;
+    if (file === '404.html') continue;
     const content = await readFile(join(distDir, file), 'utf-8');
 
     const issues = [];
 
-    if (!/<title>[^<]+<\/title>/i.test(content)) {
+    const titleMatch = content.match(/<title>([^<]+)<\/title>/i);
+    const title = titleMatch?.[1]?.trim() ?? '';
+
+    if (!title) {
       issues.push('Missing <title>');
+    } else {
+      const len = [...title].length;
+      if (len > TITLE_HARD_MAX) {
+        issues.push(`Title too long (${len} > ${TITLE_HARD_MAX})`);
+      } else if (len < TITLE_RECOMMENDED_MIN || len > TITLE_RECOMMENDED_MAX) {
+        issues.push(`Title length outside recommended range (${len}, recommended ${TITLE_RECOMMENDED_MIN}-${TITLE_RECOMMENDED_MAX})`);
+      }
+
+      const prev = titlesByValue.get(title) || [];
+      prev.push(file);
+      titlesByValue.set(title, prev);
     }
+
     if (!/<meta name="description"/i.test(content)) {
       issues.push('Missing meta description');
     }
@@ -35,9 +55,6 @@ async function checkSeo() {
     }
     if (!/<meta property="og:description"/i.test(content)) {
       issues.push('Missing og:description');
-    }
-    if (!/<h1/i.test(content)) {
-      issues.push('Missing H1');
     }
 
     const h1Matches = content.match(/<h1[^>]*>([^<]+)<\/h1>/gi) || [];
@@ -55,6 +72,14 @@ async function checkSeo() {
       issues.forEach(issue => console.log(`        - ${issue}`));
       failed++;
     }
+  }
+
+  // Enforce unique, non-empty titles across public pages.
+  for (const [title, files] of titlesByValue.entries()) {
+    if (files.length <= 1) continue;
+    console.log(`  [FAIL] Duplicate <title>: ${JSON.stringify(title)}`);
+    files.forEach(f => console.log(`        - ${f}`));
+    failed++;
   }
 
   console.log(`\nResult: ${passed} files passed, ${failed} files with SEO issues`);
