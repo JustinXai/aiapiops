@@ -1,0 +1,13 @@
+---
+description: Content and page rules for AI API Ops.
+globs: src/data/**,src/pages/**,src/components/content/**
+alwaysApply: false
+---
+
+- Public pages must be complete, useful English pages.
+- Planned pages must not become public 200 routes.
+- Every public page needs unique title, meta, H1, canonical, AI Summary, Quick Answer, FAQ, internal links, and RutaAPI CTA.
+- Agent API pages must cover API key, OpenRouter/Base URL/model ID, 401/403, credits, model not found, rate limits, timeout, token usage spikes, security risks, and small prepaid testing.
+- Media API pages must cover official API vs third-party provider vs aggregator API, pricing units, async jobs, polling, webhook/callback, timeout, failed generation/retry cost, and model availability caveats.
+- Do not write Chinese URLs or Chinese page copy for this English site.
+- Do not use generic AI filler.

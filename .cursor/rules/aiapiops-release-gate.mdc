@@ -1,0 +1,27 @@
+---
+description: Release gate for AI API Ops deployments.
+globs: scripts/**,package.json,public/**,src/**
+alwaysApply: false
+---
+
+Do not report Done after local build only.
+
+Required before Done:
+
+- `npm run verify`
+- `git diff` reviewed
+- Cloudflare production deploy confirmed
+- cache-busted production live checks pass
+- changed public pages return 200
+- planned pages return 404
+- `sitemap.xml` returns 200 and only includes public canonical URLs
+- `robots.txt` returns 200 and references `https://aiapiops.com/sitemap.xml`
+- `llms.txt` returns 200 and only lists public pages
+- CTA URLs exact:
+  - `https://app.rutaapi.com/register?lng=en`
+  - `https://app.rutaapi.com/pricing`
+- no banned claims
+- no cross-project contamination
+- no playground copy
+- no duplicate numbering patterns like `1. 1` / `2. 2` / `3. 3`
+- production HTML downloaded and scanned for changed pages

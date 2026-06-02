@@ -1,0 +1,26 @@
+---
+description: Claim safety rules for AI API Ops.
+globs: src/**,public/**
+alwaysApply: false
+---
+
+Banned claims:
+
+- cheapest
+- guaranteed compatible
+- official partner
+- all models available
+- unlimited generation
+- no billing risk
+- no failed-generation cost
+- RutaAPI supports every model mentioned
+- Sora/Veo/Kling/Runway/Seedance always available through RutaAPI
+
+Required safe wording:
+
+- check live model pricing
+- model availability can change
+- test small before scaling
+- media generation pricing may be per token, credit, second, image, video or async task
+- failed generations and retries should be checked in request logs and provider dashboards
+- agent workflows can multiply token usage through long context, retries, tool calls and automation

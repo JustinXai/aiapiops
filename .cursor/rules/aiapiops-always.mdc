@@ -1,0 +1,10 @@
+---
+description: Always read AI API Ops project memory and release gates before editing.
+globs: alwaysApply: true
+---
+
+- Cursor must read `AGENTS.md` first.
+- Cursor must read `docs/PROJECT_MEMORY.md`, `docs/RELEASE_GATE.md`, `docs/HISTORICAL_INCIDENTS.md`, `docs/TASTE_GUIDE.md`, `docs/CONTENT_ROADMAP.md`, `docs/SEO_GEO_RULES.md`, and `docs/OPERATIONS.md` before making changes.
+- Cursor must summarize what it read before editing.
+- Cursor must not report Done unless the release gate passes.
+- Cursor must not submit or recommend GSC/Bing until production live checks pass.

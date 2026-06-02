@@ -1,0 +1,15 @@
+---
+description: Taste and design rules for AI API Ops.
+globs: src/components/**,src/pages/**,src/data/**
+alwaysApply: false
+---
+
+- Preserve A · Ops Terminal visual identity.
+- Do not redesign the site unless explicitly asked.
+- Keep dark developer ops feel.
+- Keep terminal / ops snapshot style.
+- Keep H1 dominant and hero uncrowded.
+- Do not turn homepage into generic SaaS landing page.
+- Do not add fake dashboards, noisy charts, purple gradients, stock images or heavy animations.
+- Do not change global color tokens or spacing scale without explicit approval.
+- Any homepage copy expansion must pass taste check: no crowded first screen, no keyword stuffing above the fold.
