@@ -1,7 +1,7 @@
 AI API Ops — Independent developer guides for MCP and API operations.
 
 https://aiapiops.com/
-Homepage: Run AI apps with fewer API surprises.
+Homepage: Operate AI agents and media APIs before costs surprise you.
 
 https://aiapiops.com/mcp-server-chatgpt/
 MCP Server for ChatGPT: What to Check Before Connecting Tools
@@ -14,3 +14,15 @@ Understand how to review MCP Registry metadata, namespaces, publisher signals, i
 https://aiapiops.com/llm-observability/
 LLM Observability for AI Agents: What to Trace Before Scaling
 Learn how LLM observability helps trace model calls, tool calls, retries, request IDs, latency, token usage and billing deltas in AI agent workflows.
+
+https://aiapiops.com/openclaw-openrouter/
+OpenClaw OpenRouter: What to Check Before Running Agents
+How to set up OpenClaw with OpenRouter, configure the OpenAI-compatible endpoint, manage API credits, handle 401 and 403 errors, and review token usage before scaling.
+
+https://aiapiops.com/claude-code-token-cost/
+Claude Code Token Cost: What to Check Before Scaling
+Understand what drives Claude Code token cost, including model choice, long context, tool calls, retries, file reads and automation patterns before scaling.
+
+https://aiapiops.com/video-generation-api-pricing/
+Video Generation API Pricing: What to Check Before Building
+Video generation API pricing units, async workflows, polling, webhooks, failed generation cost and how to test before scaling.
