@@ -13,7 +13,7 @@ const { steps } = Astro.props;
     </svg>
     <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Quick Answer</span>
   </div>
-  <ol class="space-y-2">
+  <ul class="space-y-2 list-none">
     {steps.map((step, i) => (
       <li class="flex items-start gap-3">
         <span class="flex-shrink-0 w-5 h-5 rounded bg-slate-800 border border-slate-700/50 flex items-center justify-center text-[10px] font-mono text-slate-500">
@@ -22,5 +22,5 @@ const { steps } = Astro.props;
         <span class="text-xs text-slate-300 leading-relaxed pt-0.5">{step}</span>
       </li>
     ))}
-  </ol>
+  </ul>
 </div>
