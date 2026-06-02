@@ -1,0 +1,215 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'claude-code-token-cost')!;
+
+const quickAnswerSteps = [
+  'Review the model pricing for the Claude model you are using.',
+  'Check context window size and how much history is sent per request.',
+  'Monitor token usage per request and aggregate across the session.',
+  'Review tool call frequency and file read sizes.',
+  'Test with a small prepaid API balance before scaling.',
+];
+
+const checklistItems = [
+  'Check the model ID and its input and output token pricing.',
+  'Review the context window size for the selected model.',
+  'Understand how much conversation history is included in each request.',
+  'Log token usage per request and compare against expected cost.',
+  'Monitor tool call frequency and file read operations.',
+  'Identify automation loops that may resend the full context window.',
+  'Test with a small prepaid API balance before scaling.',
+];
+
+const evidenceItems = [
+  { label: 'Model pricing page', value: 'input and output token pricing per model' },
+  { label: 'Request logs', value: 'token counts, model ID, request IDs per call' },
+  { label: 'Usage dashboard', value: 'aggregate token usage across sessions' },
+  { label: 'Context audit', value: 'how much history is sent per request in your setup' },
+];
+
+const failureModes = [
+  {
+    symptom: 'Token usage is much higher than expected for simple tasks',
+    cause: 'The full conversation history is sent with every new request, or the model is sending verbose responses that were not anticipated.',
+    whatToDo: 'Review the context management settings in Claude Code. Check how many tokens each request is sending. Consider limiting context window or truncating conversation history.',
+  },
+  {
+    symptom: 'Tool calls generate unexpected token overhead',
+    cause: 'Tool calls include the tool description, arguments and results in the prompt. Large file reads or repeated tool calls can grow the context window significantly.',
+    whatToDo: 'Log each tool call and its token contribution. Check whether the tool outputs can be truncated or summarized before being passed back to the model.',
+  },
+  {
+    symptom: 'Retries and automation loops multiply token usage',
+    cause: 'When Claude Code retries on error or loops through a workflow, each attempt may resend the full context window.',
+    whatToDo: 'Implement idempotency checks before retrying. Log retry events separately. Monitor token usage across retry attempts.',
+  },
+  {
+    symptom: 'Multiple Claude Code instances running simultaneously',
+    cause: 'Running several Claude Code sessions at the same time multiplies token usage and credits consumed.',
+    whatToDo: 'Track the number of concurrent sessions. Use usage records and request IDs to attribute token consumption to each session.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What affects Claude Code token cost?',
+    a: 'Claude Code token cost is driven by model choice, context window size, conversation history sent per request, tool call frequency, file read sizes, response length and retry behavior. Each of these can multiply token usage beyond the baseline model pricing.',
+  },
+  {
+    q: 'How does context management affect token cost?',
+    a: 'If Claude Code sends full conversation history with each new request, token usage grows across the session. Managing context means truncating or summarizing old messages, limiting the number of turns in each session, or using models with smaller context windows for simpler tasks.',
+  },
+  {
+    q: 'How do tool calls affect Claude Code token cost?',
+    a: 'Tool calls add tokens to the prompt through the tool description, the arguments passed, and the tool result that is fed back to the model. Large file reads, repeated shell command outputs and verbose tool responses can significantly increase per-request token counts.',
+  },
+  {
+    q: 'How can I track Claude Code token usage?',
+    a: 'Capture the token usage from each API response (usage.prompt_tokens and usage.completion_tokens) and log it alongside the request ID. Aggregate these across sessions to understand total consumption. Compare against the model pricing page to estimate cost.',
+  },
+  {
+    q: 'Does Claude Code support all Claude models through RutaAPI?',
+    a: 'Model availability can change. Check live model pricing and the provider /v1/models endpoint to confirm which Claude models are currently available for your account.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'OpenClaw OpenRouter', href: '/openclaw-openrouter/', desc: 'OpenRouter model routing and OpenClaw setup.' },
+  { label: 'LLM Observability', href: '/llm-observability/', desc: 'Trace token usage, request IDs and billing signals.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="Agent API"
+  h1={page.h1}
+  summary="What drives Claude Code token cost, how to review model pricing, context management, tool call overhead, retries and automation patterns before scaling."
+  lastReviewed="June 2026"
+  readingTime="7 min read"
+  trackLabel="Agent API"
+>
+  <AISummary
+    title="Claude Code token cost comes from model choice, context size and tool call frequency."
+    summary="Review model pricing, understand how context grows across sessions, log token usage per request, and test with a small prepaid balance before scaling agent workflows."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers running Claude Code as a coding agent who want to understand what drives API cost. If you are scaling Claude Code usage or seeing higher-than-expected API bills, this guide helps you review model choice, context management, tool call overhead and automation patterns.
+  </p>
+
+  <h2>What affects Claude Code token cost</h2>
+  <p>
+    Claude Code token cost is not fixed per task. It varies based on several factors that can interact and compound:
+  </p>
+  <ul>
+    <li><strong>Model selection:</strong> Different Claude models have different input and output token pricing. Larger models cost more per token.</li>
+    <li><strong>Context window:</strong> Every token in the context window is charged as an input token on each request. The larger the context window, the higher the per-request baseline cost.</li>
+    <li><strong>Conversation history:</strong> If full conversation history is sent with each new request, token usage grows across the session rather than resetting.</li>
+    <li><strong>Tool calls:</strong> Each tool call adds the tool description, arguments and result to the context. Large file reads or verbose command outputs can be expensive.</li>
+    <li><strong>Retries and loops:</strong> Retries resend the full context window. Automation loops that run without session resets accumulate context and token cost.</li>
+    <li><strong>Output length:</strong> Verbose model responses, debug output and repeated system prompts all contribute to completion token charges.</li>
+  </ul>
+
+  <RutaCta />
+
+  <h2>Model selection and context management</h2>
+  <p>
+    Choosing a model affects both capability and cost. Smaller context windows cost less per request, but may require truncating or summarizing conversation history. Larger context windows give the model more room to work, but every token in the window counts toward input token charges.
+  </p>
+  <p>
+    Context management is the practice of controlling how much history is included in each request. Strategies include:
+  </p>
+  <ul>
+    <li>Truncating or summarizing older messages when the context window approaches its limit.</li>
+    <li>Starting fresh sessions for discrete tasks rather than running everything in one long session.</li>
+    <li>Limiting the number of tool call rounds per session.</li>
+    <li>Using models with smaller context windows for simpler, well-defined tasks.</li>
+  </ul>
+  <p>
+    Check the model pricing page for input and output token rates. Model availability can change — verify which Claude models are available for your account before selecting one.
+  </p>
+
+  <Checklist title="Token cost review checklist" items={checklistItems} />
+
+  <h2>Tool calls, file reads and command execution</h2>
+  <p>
+    Tool calls let Claude Code interact with files, run shell commands and use external services. Each tool call has a token cost:
+  </p>
+  <ul>
+    <li>The tool description is loaded into the context once per session.</li>
+    <li>The arguments passed to the tool are added to the prompt.</li>
+    <li>The tool result returned to the model is added to the context as well.</li>
+  </ul>
+  <p>
+    Large file reads, long shell command outputs and repeated tool invocations can grow the context window significantly across a session. To control this:
+  </p>
+  <ul>
+    <li>Limit file read sizes or use summary passes instead of reading entire files.</li>
+    <li>Truncate or filter shell command output before passing it to the model.</li>
+    <li>Log tool call token contributions to understand which tools are the biggest cost drivers.</li>
+  </ul>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>Multiple instances and automation loops</h2>
+  <p>
+    Running multiple Claude Code instances simultaneously multiplies token consumption. Each instance has its own context window, tool calls and API requests.
+  </p>
+  <p>
+    Automation loops that run without human oversight can accumulate significant token usage. Without active monitoring, it is difficult to know how much context has been built up or how many API calls have been made.
+  </p>
+  <p>
+    Recommended practices:
+  </p>
+  <ul>
+    <li>Track token usage per session using request IDs and usage records.</li>
+    <li>Set usage thresholds and alerts for unusual consumption patterns.</li>
+    <li>Use idempotency checks before retrying failed steps.</li>
+    <li>Log retry events separately from initial calls.</li>
+    <li>Review aggregate usage against expected cost baselines regularly.</li>
+  </ul>
+
+  <h2>Usage records, request IDs and billing evidence</h2>
+  <p>
+    To understand what Claude Code actually cost, compare your own usage logs with the provider billing dashboard. Request IDs let you match specific charges to specific calls.
+  </p>
+  <EvidenceList items={evidenceItems} />
+
+  <h2>Small prepaid testing checklist</h2>
+  <p>
+    Before scaling Claude Code usage:
+  </p>
+  <ul>
+    <li>Run a representative task and capture token usage per request.</li>
+    <li>Compare token counts against the model pricing to estimate per-session cost.</li>
+    <li>Check how much context history is sent per request in your configuration.</li>
+    <li>Identify the biggest token cost drivers: context size, tool calls, or output length.</li>
+    <li>Test with a small prepaid API balance and compare actual billing against expectations.</li>
+  </ul>
+
+  <h2>How RutaAPI fits</h2>
+  <p>
+    RutaAPI offers prepaid API credits that allow you to test Claude Code token cost in a controlled way. Load a small balance, run a representative task, and compare actual usage against your cost estimates. Test small before scaling. Model availability can change — check live model pricing and verify model visibility before committing to large workloads. Actual billing depends on token usage and model pricing.
+  </p>
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>

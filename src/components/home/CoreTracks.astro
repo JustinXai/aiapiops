@@ -10,15 +10,29 @@ const tracks = [
     highlight: true,
   },
   {
-    title: 'MCP Registry & Trust',
-    description: 'Use registry metadata as one signal, then check publisher, namespace, install config and permissions.',
-    href: '/mcp-registry/',
+    title: 'OpenClaw OpenRouter',
+    description: 'Configure the OpenAI-compatible endpoint, API credits, model routing, 401 and 403 errors.',
+    href: '/openclaw-openrouter/',
     badge: 'Guide',
     highlight: false,
   },
   {
-    title: 'API Usage & Credits',
-    description: 'Understand OpenAI API usage, prepaid credits, billing records and small-balance testing.',
+    title: 'Claude Code Token Cost',
+    description: 'What drives Claude Code token cost, context management, tool calls and automation patterns.',
+    href: '/claude-code-token-cost/',
+    badge: 'Guide',
+    highlight: false,
+  },
+  {
+    title: 'Video Generation API Pricing',
+    description: 'Pricing units, async workflows, polling, webhooks, failed generation and retry cost.',
+    href: '/video-generation-api-pricing/',
+    badge: 'Guide',
+    highlight: false,
+  },
+  {
+    title: 'API Credits & Billing',
+    description: 'Understand OpenAI-compatible API usage, prepaid credits, billing records and small-balance testing.',
     href: null,
     badge: 'Planned',
     highlight: false,
@@ -41,7 +55,7 @@ const tracks = [
         Each guide covers what to check, what can go wrong, and when to test with a small prepaid balance.
       </p>
     </div>
-    <div class="grid sm:grid-cols-2 gap-4">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {tracks.map((track) => (
         <Card
           title={track.title}

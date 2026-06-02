@@ -1,7 +1,10 @@
 export const navLinks = [
-  { label: 'MCP for ChatGPT', href: '/mcp-server-chatgpt/' },
-  { label: 'Registry Trust', href: '/mcp-registry/' },
-  { label: 'Observability', href: '/llm-observability/' },
+  { label: 'MCP', href: '/mcp-server-chatgpt/' },
+  { label: 'Agent API', href: '/openclaw-openrouter/' },
+  { label: 'Media API', href: '/video-generation-api-pricing/' },
+  { label: 'API Credits & Billing', href: null },
+  { label: 'LLM Observability', href: '/llm-observability/' },
+  { label: 'RutaAPI', href: 'https://app.rutaapi.com/pricing' },
 ];
 
 export const ctaButtons = {

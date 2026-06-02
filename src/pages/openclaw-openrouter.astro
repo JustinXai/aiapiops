@@ -1,0 +1,202 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'openclaw-openrouter')!;
+
+const quickAnswerSteps = [
+  'Set up your OpenRouter API key and confirm the base URL.',
+  'Configure OpenClaw to use the OpenAI-compatible endpoint.',
+  'Select a model ID from the OpenRouter model catalog.',
+  'Verify credits are loaded in your OpenRouter account.',
+  'Test with a small prepaid API balance before running long workflows.',
+];
+
+const checklistItems = [
+  'Confirm the OpenAI-compatible base URL in OpenClaw settings.',
+  'Verify the OpenRouter API key is active and has available credits.',
+  'Check which model IDs are available in your OpenRouter tier.',
+  'Review token usage pricing for the selected model.',
+  'Set up request logging to capture request IDs and token counts.',
+  'Monitor for 401, 403, 429 and 5xx errors in early runs.',
+  'Test with a small prepaid API balance before scaling.',
+];
+
+const evidenceItems = [
+  { label: 'OpenRouter dashboard', value: 'credits balance and model catalog' },
+  { label: 'OpenRouter /v1/models', value: 'model availability and pricing per model' },
+  { label: 'OpenClaw config', value: 'base URL and API key configuration' },
+  { label: 'Request logs', value: 'request IDs, token counts, model IDs' },
+];
+
+const failureModes = [
+  {
+    symptom: '401 Unauthorized or 403 Forbidden on every request',
+    cause: 'Invalid API key, wrong key format, or the key does not have permission for the requested model.',
+    whatToDo: 'Verify the API key in the OpenRouter dashboard. Check that the key is active and not revoked. Confirm the model is in your subscription tier.',
+  },
+  {
+    symptom: 'Model not found or 404 response',
+    cause: 'The model ID does not exist in OpenRouter, or the model is not available in your region.',
+    whatToDo: 'Check the OpenRouter /v1/models endpoint to confirm the exact model ID and availability for your account.',
+  },
+  {
+    symptom: 'Rate limit or timeout errors',
+    cause: 'Too many concurrent requests, hitting the rate limit for the model tier, or network timeout.',
+    whatToDo: 'Add retry logic with exponential backoff. Check rate limit headers in responses. Consider spreading requests across time windows.',
+  },
+  {
+    symptom: 'Token usage is higher than expected',
+    cause: 'Large context windows, repeated tool calls, or the model sending long completion responses.',
+    whatToDo: 'Review request logs and token counts per call. Check if OpenClaw is sending full conversation history on each turn.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What does OpenClaw do with OpenRouter?',
+    a: 'OpenClaw is a coding agent that can route API calls through OpenRouter to access multiple models via a single OpenAI-compatible endpoint. OpenRouter acts as an aggregator API, providing a unified base URL and credit-based billing across many model providers.',
+  },
+  {
+    q: 'What is an OpenAI-compatible endpoint?',
+    a: 'An OpenAI-compatible endpoint means OpenClaw can send requests using the same format as the OpenAI API. The base URL is set to OpenRouter instead of OpenAI, and model IDs follow the OpenRouter catalog naming convention.',
+  },
+  {
+    q: 'How do I handle 401 and 403 errors with OpenClaw and OpenRouter?',
+    a: '401 means the API key is missing or invalid. 403 means the key is valid but lacks permission for the requested model or operation. Verify the key in the OpenRouter dashboard and confirm your subscription tier includes the model you are trying to use.',
+  },
+  {
+    q: 'Why does token usage spike with OpenRouter?',
+    a: 'Token usage can spike because each model has its own pricing per input and output token. Routing through OpenRouter adds overhead from the aggregator layer. OpenClaw may also send full conversation history with each request, which grows the context window and multiplies token costs across turns.',
+  },
+  {
+    q: 'What are the security risks of using OpenClaw with OpenRouter?',
+    a: 'Security risks include: chat ingress through conversation history that may be logged by the provider, file permission exposure through OpenClaw tool execution, command execution on the host system, and prompt injection through malicious user inputs. Review OpenClaw documentation and restrict file access and tool permissions appropriately.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'Claude Code Token Cost', href: '/claude-code-token-cost/', desc: 'What drives token cost when using Claude through OpenRouter.' },
+  { label: 'LLM Observability', href: '/llm-observability/', desc: 'Trace request IDs, token usage and billing signals.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="Agent API"
+  h1={page.h1}
+  summary="How to set up OpenClaw with OpenRouter, configure the OpenAI-compatible endpoint, manage API credits, handle common errors and review token usage before scaling agent workflows."
+  lastReviewed="June 2026"
+  readingTime="6 min read"
+  trackLabel="Agent API"
+>
+  <AISummary
+    title="OpenClaw with OpenRouter requires active credits and the right model ID."
+    summary="Configure the OpenAI-compatible endpoint, verify your OpenRouter API key, check model availability, and monitor token usage. No single step guarantees error-free runs."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers using OpenClaw as a coding agent and routing requests through OpenRouter for access to multiple models. If you are connecting OpenClaw to an OpenAI-compatible provider for the first time, this guide helps you set up credentials and review costs.
+  </p>
+
+  <h2>What OpenClaw and OpenRouter do</h2>
+  <p>
+    OpenClaw is a coding agent that can execute file operations, run shell commands and call model APIs. When configured with OpenRouter, OpenClaw sends requests to the OpenRouter endpoint instead of a single provider.
+  </p>
+  <p>
+    OpenRouter acts as an aggregator API. It provides a single OpenAI-compatible base URL and routes requests to the appropriate underlying provider based on the model ID. OpenRouter manages billing through a credit system, where each model has its own input and output token pricing.
+  </p>
+  <p>
+    The benefit is unified access to many models through one API key and one billing interface. The trade-off is that you need to verify model availability, understand pricing per model, and monitor token usage across the aggregator layer.
+  </p>
+
+  <RutaCta />
+
+  <h2>API key, base URL, model ID and OpenAI-compatible workflow</h2>
+  <p>
+    OpenClaw connects to OpenRouter using an OpenAI-compatible endpoint. The key configuration points are:
+  </p>
+  <ul>
+    <li><strong>Base URL:</strong> Set to <code>https://openrouter.ai/api/v1</code> in OpenClaw settings.</li>
+    <li><strong>API key:</strong> Your OpenRouter API key, loaded from environment variables or a config file.</li>
+    <li><strong>Model ID:</strong> A string from the OpenRouter model catalog, for example <code>anthropic/claude-3-5-sonnet</code> or <code>openai/gpt-4o</code>.</li>
+    <li><strong>Credits:</strong> OpenRouter credits must be loaded in your account before OpenClaw can make requests.</li>
+  </ul>
+  <p>
+    Confirm the base URL and API key are set correctly in your OpenClaw configuration file before running any workflows. OpenRouter does not support OpenAI-specific endpoints like assistants or fine-tuning — only chat completions.
+  </p>
+
+  <Checklist title="OpenClaw OpenRouter setup checklist" items={checklistItems} />
+
+  <h2>Common errors: 401, 403, no credits, model not found, rate limits, timeout</h2>
+  <p>
+    These are the most common failure modes when OpenClaw is configured with OpenRouter:
+  </p>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>Why token usage can spike</h2>
+  <p>
+    Token usage with OpenClaw and OpenRouter can exceed expectations for several reasons:
+  </p>
+  <ul>
+    <li>Each model has its own input and output token pricing on OpenRouter. Switching models changes the cost per token.</li>
+    <li>OpenClaw may send full conversation history with each new request, growing the context window across turns.</li>
+    <li>Tool calls and file reads generate additional tokens in the prompt and the model response.</li>
+    <li>Retries on timeout or rate limit errors resend the full context window, multiplying token consumption.</li>
+  </ul>
+  <p>
+    Review request logs and token counts per call. Use the OpenRouter usage dashboard to compare token counts against your expectations before running long agent sessions.
+  </p>
+
+  <h2>Security risks: chat ingress, file permissions, command execution, external tools, prompt injection</h2>
+  <p>
+    Using OpenClaw with OpenRouter introduces security considerations beyond typical API usage:
+  </p>
+  <ul>
+    <li><strong>Chat ingress:</strong> Conversation history may be logged by the model provider. Do not include sensitive credentials or proprietary code in conversation context unless you have reviewed the provider data policy.</li>
+    <li><strong>File permissions:</strong> OpenClaw tool execution can read and write files on the host system. Restrict tool permissions to the minimum required scope.</li>
+    <li><strong>Command execution:</strong> Shell commands run through OpenClaw execute on your machine or CI environment. Review each command before allowing execution.</li>
+    <li><strong>External tools:</strong> OpenClaw may call external tools or APIs during a workflow. These calls count toward token usage and may expose API keys if not handled carefully.</li>
+    <li><strong>Prompt injection:</strong> Malicious user inputs or file contents can influence agent behavior. Sanitize untrusted inputs and review OpenClaw tool outputs before acting on them.</li>
+  </ul>
+
+  <h2>Evidence to inspect</h2>
+  <EvidenceList items={evidenceItems} />
+
+  <h2>Small prepaid testing checklist</h2>
+  <p>
+    Before running long agent workflows, test with a small prepaid API balance:
+  </p>
+  <ul>
+    <li>Load a small amount of credits in your OpenRouter account and track usage against the balance.</li>
+    <li>Run a short OpenClaw session and compare actual token usage against your cost estimate.</li>
+    <li>Review request logs for 401, 403, 429 and 5xx responses during the test run.</li>
+    <li>Verify that the model ID in OpenClaw matches a model available in your OpenRouter tier.</li>
+    <li>Check the OpenRouter /v1/models endpoint to confirm live model availability before scaling.</li>
+  </ul>
+
+  <h2>How RutaAPI fits</h2>
+  <p>
+    RutaAPI offers prepaid API credits that can be useful when testing OpenClaw workflows and comparing token usage across different model configurations. Test with a small balance before scaling OpenClaw automation. Check live model pricing and verify model availability with the provider before running large workloads. Actual billing depends on token usage and model pricing.
+  </p>
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>

@@ -9,6 +9,9 @@ const INTERNAL_LINKS = [
   '/mcp-server-chatgpt/',
   '/mcp-registry/',
   '/llm-observability/',
+  '/openclaw-openrouter/',
+  '/claude-code-token-cost/',
+  '/video-generation-api-pricing/',
 ];
 
 const EXACT_CTA_URLS = [

@@ -1,0 +1,246 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'video-generation-api-pricing')!;
+
+const quickAnswerSteps = [
+  'Identify the pricing unit: token, credit, second, image, video or async task.',
+  'Determine whether the API uses synchronous or async workflow.',
+  'Check if the provider uses polling, webhooks or callbacks for async jobs.',
+  'Review timeout, retry and failed generation cost policies.',
+  'Test with a small prepaid credit balance before processing batches.',
+];
+
+const checklistItems = [
+  'Identify the exact pricing unit: token, credit, second, image, video or async task.',
+  'Confirm whether the API is synchronous or uses async job creation.',
+  'Check if polling interval, webhook endpoint or callback URL is required.',
+  'Review timeout duration and what happens when a job times out.',
+  'Check whether failed generations and retries count toward billing.',
+  'Verify model availability for your region and account tier.',
+  'Test with a small prepaid credit balance before processing large batches.',
+];
+
+const evidenceItems = [
+  { label: 'Provider pricing page', value: 'pricing unit and rate per generation type' },
+  { label: 'API documentation', value: 'async workflow, polling interval, webhook format' },
+  { label: 'Request logs', value: 'job IDs, status codes, retry attempts' },
+  { label: 'Provider dashboard', value: 'credit balance and generation history' },
+];
+
+const failureModes = [
+  {
+    symptom: 'Async job never completes and credit is consumed',
+    cause: 'The job timed out on the provider side, but the request already consumed credits. Some providers charge on job creation, not delivery.',
+    whatToDo: 'Review the provider timeout policy. Check request logs for the job status. Implement a timeout handler on your side that cancels or flags stuck jobs.',
+  },
+  {
+    symptom: 'Retry loop causes repeated charges for the same failed generation',
+    cause: 'Without idempotency checks, a failed generation may be retried multiple times, each attempt consuming credits.',
+    whatToDo: 'Store job IDs and check generation status before retrying. Implement exponential backoff with a cap on retry attempts.',
+  },
+  {
+    symptom: 'Polling interval generates unexpected API overhead',
+    cause: 'Polling for job status creates additional API calls that may have their own cost. High polling frequency multiplies this overhead.',
+    whatToDo: 'Use the longest polling interval that meets your latency requirements. Consider switching to webhooks or callbacks if available, which eliminate polling overhead.',
+  },
+  {
+    symptom: 'Model or region not available at generation time',
+    cause: 'Model availability can change. A video generation request may fail because the model is temporarily unavailable in your region.',
+    whatToDo: 'Check the /v1/models endpoint or provider documentation for current availability. Implement graceful fallback behavior for unavailable models.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'How is video generation API pricing different from LLM API pricing?',
+    a: 'LLM APIs are typically priced per input and output token. Video generation APIs may be priced per credit, per second, per generated video, or per async task — depending on the provider. Some providers also charge for failed generations or retries. Check the provider pricing page carefully.',
+  },
+  {
+    q: 'What is an async video generation workflow?',
+    a: 'Many video generation APIs do not return the video directly. Instead, they create an async task and return a job ID. You then poll a status endpoint, receive a webhook callback, or use a callback URL to get the result when the video is ready.',
+  },
+  {
+    q: 'Do failed video generations cost money?',
+    a: 'This depends on the provider. Some charge on job creation regardless of outcome. Others only charge on successful delivery. Failed generations and retries should be checked in request logs and provider dashboards. Always review the failed-generation billing policy before processing batches.',
+  },
+  {
+    q: 'What are the risks of polling for video job status?',
+    a: 'Polling creates additional API calls that may have their own cost. It also adds latency. If the polling interval is too short, it can trigger rate limits. Consider using webhooks or callbacks instead of polling when the provider supports them.',
+  },
+  {
+    q: 'Does RutaAPI support every video generation model?',
+    a: 'No. Model availability can change and varies by provider and region. Check live model pricing and the /v1/models endpoint for currently available video generation models.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'LLM Observability', href: '/llm-observability/', desc: 'Trace request IDs, token usage and billing signals for media API calls.' },
+  { label: 'Claude Code Token Cost', href: '/claude-code-token-cost/', desc: 'Token cost drivers for coding agent workflows.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="Media API"
+  h1={page.h1}
+  summary="Video generation API pricing units, async workflows, polling, webhooks, failed generation cost and how to test before scaling."
+  lastReviewed="June 2026"
+  readingTime="7 min read"
+  trackLabel="Media API"
+>
+  <AISummary
+    title="Video generation API pricing depends on the unit and the workflow."
+    summary="Identify whether the provider charges per token, credit, second, image, video or async task. Understand the async workflow, polling, webhook and retry cost policies before processing batches. Test with a small prepaid credit balance first."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers evaluating or integrating video generation APIs who need to understand pricing units, async workflows and cost implications. If you are comparing official model APIs, third-party provider APIs and aggregator APIs, this guide helps you distinguish between them and review the engineering workflow for each.
+  </p>
+
+  <h2>What video generation API pricing means</h2>
+  <p>
+    Unlike LLM APIs where cost is primarily driven by token count, video generation API pricing varies significantly by provider. Media generation pricing may be per token, credit, second, image, video or async task — or a combination of these units.
+  </p>
+  <p>
+    Before integrating a video generation API, identify:
+  </p>
+  <ul>
+    <li>The pricing unit and rate for the generation mode you need.</li>
+    <li>Whether billing occurs on job creation, delivery or both.</li>
+    <li>Whether failed generations and retries consume credits.</li>
+    <li>Whether there are minimum billing thresholds or flat-rate charges.</li>
+  </ul>
+
+  <RutaCta />
+
+  <h2>Official API vs third-party provider vs aggregator API</h2>
+  <p>
+    There are three main categories of video generation API:
+  </p>
+  <ul>
+    <li><strong>Official model API:</strong> Provided directly by the model owner. Pricing is set by the provider and documented on their pricing page. Direct access to the latest model versions.</li>
+    <li><strong>Third-party provider API:</strong> A separate service that provides access to models through their own infrastructure. Pricing and availability may differ from the official API. Rate limits, region restrictions and model versioning are controlled by the provider.</li>
+    <li><strong>Aggregator API:</strong> A unified API that routes requests to multiple underlying providers. Provides a single base URL and billing interface. Model availability and pricing depend on the aggregator and the current provider pool.</li>
+  </ul>
+  <p>
+    Every media API page on this site clearly distinguishes between official model documentation, third-party provider pages and aggregator APIs. Do not assume pricing, availability or capabilities are identical across categories.
+  </p>
+
+  <Checklist title="Video generation API pricing checklist" items={checklistItems} />
+
+  <h2>Pricing units: token, credit, second, image, video, async task</h2>
+  <p>
+    Common video generation pricing units:
+  </p>
+  <ul>
+    <li><strong>Per credit:</strong> A fixed credit amount is deducted per generation. The credit cost may vary by model, mode and resolution.</li>
+    <li><strong>Per second:</strong> Billing is based on the duration of the generated video.</li>
+    <li><strong>Per image:</strong> For image-to-video modes, billing may be per input image or per output frame.</li>
+    <li><strong>Per video:</strong> A flat rate per successfully delivered video file.</li>
+    <li><strong>Per async task:</strong> Billing occurs when the job is created, regardless of whether it completes successfully.</li>
+    <li><strong>Token-based:</strong> Some providers charge per input and output token for the model powering the generation.</li>
+  </ul>
+  <p>
+    Media generation pricing may be per token, credit, second, image, video or async task. Review the provider pricing page for the exact unit and rate before integrating.
+  </p>
+
+  <h2>Modes: text-to-video and image-to-video</h2>
+  <p>
+    Video generation APIs typically support one or both of:
+  </p>
+  <ul>
+    <li><strong>Text-to-video API:</strong> Generates a video from a text prompt. Pricing is usually based on the generation duration and resolution.</li>
+    <li><strong>Image-to-video API:</strong> Takes an input image and animates it into a video. Pricing may be per input image or per output frame.</li>
+  </ul>
+  <p>
+    Check which modes are available for your account and whether each mode has a different pricing unit or rate.
+  </p>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>Async workflow: task creation, polling, webhook, callback, timeout</h2>
+  <p>
+    Most video generation APIs do not return the video in the initial response. Instead they return a job ID and require a follow-up step to retrieve the result:
+  </p>
+  <ul>
+    <li><strong>Task creation:</strong> POST request to create the generation job. Returns a job ID and initial status.</li>
+    <li><strong>Polling:</strong> GET requests to a status endpoint, typically on a fixed or exponential interval. Each poll is a separate API call.</li>
+    <li><strong>Webhook or callback:</strong> The provider sends a POST request to your endpoint when the job is complete. Eliminates polling overhead.</li>
+    <li><strong>Timeout:</strong> If the job exceeds the provider timeout threshold, it may be marked as failed but still consume credits.</li>
+  </ul>
+  <p>
+    Video jobs may require polling, callbacks or webhooks depending on the provider. The workflow you implement affects latency, polling overhead and the reliability of job completion tracking.
+  </p>
+
+  <h2>Failed generation and retry cost caveats</h2>
+  <p>
+    Failed generations and retries can consume credits even when no video is delivered:
+  </p>
+  <ul>
+    <li>Some providers charge on job creation, not on successful delivery.</li>
+    <li>Retries on timeout or server errors may be charged as new jobs.</li>
+    <li>Jobs that exceed the provider timeout threshold may be billed as failed but not retried automatically.</li>
+    <li>Rate limit errors that trigger backoff delays do not consume credits, but prolonged polling does.</li>
+  </ul>
+  <p>
+    Failed generations and retries should be checked in request logs and provider dashboards. Always review the failed-generation and retry billing policy before running batch jobs.
+  </p>
+
+  <h2>Model availability and region caveats</h2>
+  <p>
+    Video generation model availability can change and varies by provider, account tier and region. A model that is available today may be restricted or removed tomorrow.
+  </p>
+  <p>
+    Before building a workflow around a specific model:
+  </p>
+  <ul>
+    <li>Check the provider /v1/models endpoint for current model availability.</li>
+    <li>Verify region restrictions for your account.</li>
+    <li>Implement graceful fallback behavior for unavailable models.</li>
+    <li>Do not hard-code model IDs without a retrieval mechanism for the current catalog.</li>
+  </ul>
+  <p>
+    Model availability can change. Check live model pricing and the provider documentation for the most current availability information.
+  </p>
+
+  <h2>Evidence to inspect</h2>
+  <EvidenceList items={evidenceItems} />
+
+  <h2>Small-scale testing checklist</h2>
+  <p>
+    Before processing large batches:
+  </p>
+  <ul>
+    <li>Generate one test video and compare credit deduction against the provider pricing page.</li>
+    <li>Verify the async workflow: confirm job creation, polling or webhook delivery, and result retrieval.</li>
+    <li>Check what happens to credit balance when a job times out or fails.</li>
+    <li>Test retry behavior and verify whether failed generations consume credits.</li>
+    <li>Load a small prepaid credit balance and run the full workflow before scaling.</li>
+  </ul>
+
+  <h2>How RutaAPI fits</h2>
+  <p>
+    RutaAPI offers prepaid API credits that allow you to test video generation API workflows in a controlled way. Test the full async workflow with a small balance before processing large batches. Check live model pricing and verify model availability before committing to a workflow. Media generation pricing may be per token, credit, second, image, video or async task. Actual billing depends on the provider pricing unit and usage.
+  </p>
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>

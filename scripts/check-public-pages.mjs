@@ -12,6 +12,9 @@ const EXPECTED_HTML_PAGES = [
   'mcp-server-chatgpt/index.html',
   'mcp-registry/index.html',
   'llm-observability/index.html',
+  'openclaw-openrouter/index.html',
+  'claude-code-token-cost/index.html',
+  'video-generation-api-pricing/index.html',
 ];
 
 const FORBIDDEN_PATTERNS = [
@@ -32,6 +35,23 @@ const PLANNED_PATHS = [
   'ai-agent-monitoring',
   'claude-code-cost',
   'codex-cli-cost',
+  'openclaw-api-key',
+  'openclaw-security',
+  'openclaw-whatsapp-telegram',
+  'claude-code-openrouter',
+  'kilo-code-openrouter',
+  'kilo-code-vs-cline',
+  'coding-agent-cost',
+  'agent-token-usage',
+  'image-generation-api-pricing',
+  'gpt-image-api',
+  'sora-api-pricing',
+  'kling-api-pricing',
+  'runway-api-pricing',
+  'seedance-api',
+  'image-to-video-api',
+  'flux-api',
+  'stable-diffusion-api',
 ];
 
 async function checkDistFiles() {

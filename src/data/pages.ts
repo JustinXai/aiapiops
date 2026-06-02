@@ -1,14 +1,14 @@
 export const publicPages = [
   {
     slug: '',
-    title: 'AI API Ops: MCP, API Usage and LLM Observability',
+    title: 'AI API Ops: MCP, Agent API Usage and LLM Observability',
     metaDescription:
-      'Independent developer guide for MCP servers, API usage, tool calls, observability and billing risk when building AI agent workflows.',
-    h1: 'Run AI apps with fewer API surprises.',
+      'Independent developer guides for MCP servers, OpenClaw, Claude Code, Kilo Code, image and video generation APIs, API credits, billing and LLM observability.',
+    h1: 'Operate AI agents and media APIs before costs surprise you.',
     canonical: 'https://aiapiops.com/',
-    ogTitle: 'AI API Ops — Run AI apps with fewer API surprises',
+    ogTitle: 'AI API Ops — MCP, Agent API Usage and LLM Observability',
     ogDescription:
-      'Independent developer guide for MCP servers, API usage, tool calls, observability and billing risk.',
+      'Independent developer guides for MCP servers, OpenClaw, Claude Code, Kilo Code, image and video generation APIs, API credits and LLM observability.',
     breadcrumb: [{ label: 'Home', url: 'https://aiapiops.com/' }],
   },
   {
@@ -55,4 +55,50 @@ export const publicPages = [
       { label: 'LLM Observability', url: 'https://aiapiops.com/llm-observability/' },
     ],
   },
+  {
+    slug: 'openclaw-openrouter',
+    title: 'OpenClaw OpenRouter: API Key and Model Routing',
+    metaDescription:
+      'How to set up OpenClaw with OpenRouter, configure the OpenAI-compatible endpoint, manage API credits, handle 401 and 403 errors, and review token usage before scaling.',
+    h1: 'OpenClaw OpenRouter: What to Check Before Running Agents',
+    canonical: 'https://aiapiops.com/openclaw-openrouter/',
+    ogTitle: 'OpenClaw OpenRouter — API Key, Model Routing and Credits',
+    ogDescription:
+      'How to set up OpenClaw with OpenRouter, configure API credits and review token usage.',
+    breadcrumb: [
+      { label: 'Home', url: 'https://aiapiops.com/' },
+      { label: 'Agent API', url: 'https://aiapiops.com/openclaw-openrouter/' },
+    ],
+  },
+  {
+    slug: 'claude-code-token-cost',
+    title: 'Claude Code Token Cost: What Drives API Spending',
+    metaDescription:
+      'Understand what affects Claude Code token cost, including model choice, long context, tool calls, file reads, retries and automation patterns before scaling.',
+    h1: 'Claude Code Token Cost: What to Check Before Scaling',
+    canonical: 'https://aiapiops.com/claude-code-token-cost/',
+    ogTitle: 'Claude Code Token Cost — Model Choice, Context and Automation',
+    ogDescription:
+      'What drives Claude Code token cost and how to review API spending before scaling.',
+    breadcrumb: [
+      { label: 'Home', url: 'https://aiapiops.com/' },
+      { label: 'Agent API', url: 'https://aiapiops.com/claude-code-token-cost/' },
+    ],
+  },
+  {
+    slug: 'video-generation-api-pricing',
+    title: 'Video Generation API Pricing: Units and Workflows',
+    metaDescription:
+      'Understand video generation API pricing units, async workflows, polling, webhooks, failed generation cost and how to test before scaling.',
+    h1: 'Video Generation API Pricing: What to Check Before Building',
+    canonical: 'https://aiapiops.com/video-generation-api-pricing/',
+    ogTitle: 'Video Generation API Pricing — Async Workflows and Cost Units',
+    ogDescription:
+      'Video generation API pricing, async jobs, polling, webhooks and testing checklist.',
+    breadcrumb: [
+      { label: 'Home', url: 'https://aiapiops.com/' },
+      { label: 'Media API', url: 'https://aiapiops.com/video-generation-api-pricing/' },
+    ],
+  },
 ];
+

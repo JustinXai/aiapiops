@@ -3,10 +3,10 @@ import TerminalWindow from '../ui/TerminalWindow.astro';
 import { ctaButtons } from '../../data/nav';
 
 const terminalLines = [
-  '$ inspect --server chatgpt-mcp --scope tools',
-  'ok    manifest found · tools exposed: 6',
-  'warn  API key passed via environment variable',
-  'check tool calls may trigger paid API usage',
+  '$ inspect agent-workflow --scope api-usage',
+  'ok    api key configured',
+  'warn  video jobs may use async polling',
+  'check tool calls, retries and media credits before scaling',
 ];
 ---
 
@@ -18,9 +18,13 @@ const terminalLines = [
         <div>
           <p class="text-accent/70 text-xs font-mono tracking-widest uppercase mb-4">AI API Ops</p>
           <h1 class="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-white leading-[1.1] tracking-tight">
-            Run AI apps with fewer API surprises.
+            Operate AI agents and media APIs before costs surprise you.
           </h1>
         </div>
+
+        <p class="text-base text-slate-400 leading-relaxed max-w-xl">
+          Practical guides for MCP servers, OpenClaw, Claude Code, Kilo Code, image and video generation APIs, credits, billing, polling, webhooks and LLM observability.
+        </p>
 
         <div class="flex flex-col sm:flex-row gap-3">
           <a
@@ -52,19 +56,22 @@ const terminalLines = [
           </div>
           <div class="font-mono text-xs text-slate-300 space-y-1">
             <div class="flex items-center gap-2">
-              <span class="text-accent/70">MCP</span>
+              <span class="text-accent/70">agent</span>
               <span class="text-slate-600">&rarr;</span>
-              <span class="text-slate-400">tools</span>
+              <span class="text-slate-400">MCP / OpenClaw / Claude Code</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-accent/70">media</span>
               <span class="text-slate-600">&rarr;</span>
-              <span class="text-slate-400">usage</span>
+              <span class="text-slate-400">image / video APIs</span>
             </div>
           </div>
           <p class="text-[11px] text-slate-500 leading-relaxed">
-            Check trust, secrets, tool calls and billing signals before long agent runs.
+            Inspect agent workflows and media APIs before running long tasks.
           </p>
         </div>
 
-        <TerminalWindow lines={terminalLines} title="inspect --server chatgpt-mcp" />
+        <TerminalWindow lines={terminalLines} title="inspect agent-workflow --scope api-usage" />
       </div>
 
     </div>

@@ -9,6 +9,24 @@ const TITLE_RECOMMENDED_MIN = 30;
 const TITLE_RECOMMENDED_MAX = 60;
 const TITLE_HARD_MAX = 65;
 
+const MEDIA_SLUGS = new Set([
+  'video-generation-api-pricing',
+]);
+
+const MEDIA_PRICING_WARNINGS = [
+  'pricing may be per',
+  'check the provider pricing',
+  'billing depends on',
+  'pricing and availability',
+];
+
+const MEDIA_OFFICIAL_VS_THIRD_PARTY_PATTERNS = [
+  /official\s+(model\s+)?API/i,
+  /third-party\s+provider/i,
+  /aggregator\s+API/i,
+  /official documentation/i,
+];
+
 async function checkSeo() {
   let passed = 0;
   let failed = 0;
@@ -22,6 +40,19 @@ async function checkSeo() {
   for (const file of htmlFiles) {
     if (!file.endsWith('.html')) continue;
     if (file === '404.html') continue;
+
+    // Determine slug from file path
+    let slug = '';
+    if (file === 'index.html') slug = '';
+    else {
+      const parts = file.replace(/\\/g, '/').split('/');
+      if (parts.length >= 2 && parts[parts.length - 1] === 'index.html') {
+        slug = parts[parts.length - 2];
+      }
+    }
+
+    const isMediaPage = MEDIA_SLUGS.has(slug);
+
     const content = await readFile(join(distDir, file), 'utf-8');
 
     const issues = [];
@@ -63,6 +94,19 @@ async function checkSeo() {
     }
     if (h1Matches.length > 1) {
       issues.push(`Multiple H1s (${h1Matches.length})`);
+    }
+
+    if (isMediaPage) {
+      const lower = content.toLowerCase();
+      const hasPricingWarning = MEDIA_PRICING_WARNINGS.some(w => lower.includes(w));
+      if (!hasPricingWarning) {
+        issues.push('Media page missing pricing freshness warning');
+      }
+
+      const hasOfficialThirdParty = MEDIA_OFFICIAL_VS_THIRD_PARTY_PATTERNS.some(re => re.test(content));
+      if (!hasOfficialThirdParty) {
+        issues.push('Media page missing official-vs-third-party API wording');
+      }
     }
 
     if (issues.length === 0) {

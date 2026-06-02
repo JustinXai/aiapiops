@@ -18,6 +18,14 @@ const BANNED_CLAIMS = [
   'mcp is always safe',
   'tool calls are always cheap',
   'rutaapi prevents all cost surprises',
+  'unlimited generation',
+  'no failed-generation cost',
+  'rutaapi supports every model',
+  'sora always available',
+  'veo always available',
+  'kling always available',
+  'runway always available',
+  'seedance always available',
 ];
 
 async function checkClaims() {

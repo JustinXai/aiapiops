@@ -5,12 +5,20 @@ const faqs = [
     a: 'No. It is an independent guide site that links to RutaAPI when prepaid API testing is relevant.',
   },
   {
-    q: 'Should I trust every MCP server in a registry?',
-    a: 'No. Registry metadata can help discovery, but you still need to review publisher signals, tool permissions, environment variables and runtime behavior.',
+    q: 'Does RutaAPI support every model mentioned on this site?',
+    a: 'No. Model availability can change. Check live model pricing and the /v1/models endpoint for what is currently available.',
   },
   {
     q: 'Why does observability matter for agent workflows?',
-    a: 'Agents can retry, call tools and trigger paid API usage. Logs, traces, usage records and request IDs help explain what happened.',
+    a: 'Agents can retry, call tools, read files and trigger paid API usage. Logs, traces, usage records and request IDs help explain what happened and what it cost.',
+  },
+  {
+    q: 'Are media generation APIs billed per token like LLM APIs?',
+    a: 'Not always. Media generation pricing may be per token, credit, second, image, video or async task. Check the provider pricing page and test with a small balance before running large batches.',
+  },
+  {
+    q: 'Do failed generations and retries cost money?',
+    a: 'Yes, depending on the provider. Failed generations and retries should be checked in request logs and provider dashboards. Some providers charge per attempt even on failure.',
   },
 ];
 ---

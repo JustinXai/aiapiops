@@ -3,14 +3,16 @@ import Card from '../ui/Card.astro';
 
 const checklist = [
   'Check publisher and namespace',
-  'Review env variables',
-  'Limit tool permissions',
-  'Trace tool calls and usage',
+  'Review env variables and API keys',
+  'Inspect tool permissions and model routing',
+  'Trace tool calls, token usage and media jobs',
 ];
 
 const relatedGuides = [
   { label: 'MCP for ChatGPT', href: '/mcp-server-chatgpt/' },
-  { label: 'MCP Registry', href: '/mcp-registry/' },
+  { label: 'OpenClaw OpenRouter', href: '/openclaw-openrouter/' },
+  { label: 'Claude Code Token Cost', href: '/claude-code-token-cost/' },
+  { label: 'Video Generation API Pricing', href: '/video-generation-api-pricing/' },
   { label: 'LLM Observability', href: '/llm-observability/' },
 ];
 ---
@@ -22,11 +24,11 @@ const relatedGuides = [
       <div>
         <p class="text-accent/70 text-xs font-mono tracking-widest uppercase mb-3">Quick Answer</p>
         <h2 class="text-xl sm:text-2xl font-bold text-white mb-4">
-          MCP server trust is not one checkbox.
+          Agent and media API costs multiply fast.
         </h2>
         <div class="rounded-xl border border-slate-700/50 bg-surface-card p-5 mb-6">
           <p class="text-sm text-slate-300 leading-relaxed mb-5">
-            Review the server, registry metadata, API keys, tool permissions and logs together. No single signal proves an MCP workflow is safe.
+            Review API keys, tool permissions, token usage, media job cost units and billing signals together. Agent workflows and async media jobs need active monitoring.
           </p>
           <div class="space-y-2">
             <p class="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-2">Quick Answer checklist</p>
@@ -43,7 +45,7 @@ const relatedGuides = [
       </div>
 
       <div>
-        <p class="text-xs font-mono text-slate-500 uppercase tracking-wider mb-4">Latest guides</p>
+        <p class="text-xs font-mono text-slate-500 uppercase tracking-wider mb-4">All guides</p>
         <div class="space-y-2">
           {relatedGuides.map(guide => (
             <a

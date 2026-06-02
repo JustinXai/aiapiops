@@ -64,6 +64,12 @@ async function checkContent() {
     if (/aicostplanner/gi.test(content)) {
       issues.push('Contamination: aicostplanner');
     }
+    if (/einvoiceatlas/gi.test(content)) {
+      issues.push('Contamination: EInvoiceAtlas');
+    }
+    if (/extensionfixes/gi.test(content)) {
+      issues.push('Contamination: ExtensionFixes');
+    }
 
     if (issues.length === 0) {
       passed++;
