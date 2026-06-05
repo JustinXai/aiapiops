@@ -15,6 +15,7 @@ const EXPECTED_HTML_PAGES = [
   'openclaw-openrouter/index.html',
   'claude-code-token-cost/index.html',
   'video-generation-api-pricing/index.html',
+  'image-generation-api-pricing/index.html',
 ];
 
 const FORBIDDEN_PATTERNS = [
@@ -43,7 +44,6 @@ const PLANNED_PATHS = [
   'kilo-code-vs-cline',
   'coding-agent-cost',
   'agent-token-usage',
-  'image-generation-api-pricing',
   'gpt-image-api',
   'sora-api-pricing',
   'kling-api-pricing',

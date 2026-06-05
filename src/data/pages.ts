@@ -86,6 +86,21 @@ export const publicPages = [
     ],
   },
   {
+    slug: 'image-generation-api-pricing',
+    title: 'Image Generation API Pricing: Units and Workflow Checks',
+    metaDescription:
+      'Understand image generation API pricing across official APIs, third-party providers and aggregators, including billing units, edits, retries and testing before scaling.',
+    h1: 'Image Generation API Pricing: What to Check Before Building',
+    canonical: 'https://aiapiops.com/image-generation-api-pricing/',
+    ogTitle: 'Image Generation API Pricing — Official APIs, Providers and Billing Units',
+    ogDescription:
+      'Image generation API pricing, billing units, retry caveats and testing checklist.',
+    breadcrumb: [
+      { label: 'Home', url: 'https://aiapiops.com/' },
+      { label: 'Media API', url: 'https://aiapiops.com/image-generation-api-pricing/' },
+    ],
+  },
+  {
     slug: 'video-generation-api-pricing',
     title: 'Video Generation API Pricing: Units and Workflows',
     metaDescription:

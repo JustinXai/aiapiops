@@ -1,0 +1,231 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'image-generation-api-pricing')!;
+
+const quickAnswerSteps = [
+  'Identify whether pricing is per token, credit, image, edit, or async task.',
+  'Check whether you are using an official API, a third-party provider API, or an aggregator API.',
+  'Review text-to-image, image editing, and image-to-image pricing separately.',
+  'Check whether failed generations and retries create billable usage.',
+  'Test small before scaling and compare request logs with the provider dashboard.',
+];
+
+const checklistItems = [
+  'Check live model pricing for the exact generation mode you plan to use.',
+  'Confirm whether billing is per token, credit, image, edit, or async task.',
+  'Separate pricing for text-to-image, image editing, and image-to-image workflows.',
+  'Confirm whether the API is official, third-party, or an aggregator path.',
+  'Review what happens when a generation fails, times out, or is retried.',
+  'Capture request IDs, image job status, and usage records in logs.',
+  'Verify model availability for your account tier and region before scaling.',
+  'Test small before scaling with a limited prepaid balance or usage cap.',
+];
+
+const evidenceItems = [
+  { label: 'Provider pricing page', value: 'current price per image, edit, credit, token, or task' },
+  { label: 'API documentation', value: 'generation modes, image edit behavior, async flow, status endpoints' },
+  { label: 'Request logs', value: 'request IDs, status codes, retries, generation mode, model ID' },
+  { label: 'Usage records', value: 'billable operations by image, edit, retry, and task outcome' },
+  { label: 'Provider dashboard', value: 'model availability, billing entries, failed jobs, and usage totals' },
+];
+
+const failureModes = [
+  {
+    symptom: 'Image edits cost more than expected',
+    cause: 'Image editing, masking, or variation endpoints may be billed differently from text-to-image generation.',
+    whatToDo: 'Check live model pricing for each image mode separately. Compare request logs and usage records against the provider dashboard before running batches.',
+  },
+  {
+    symptom: 'Retrying failed jobs multiplies cost',
+    cause: 'Retries may create new billable image generations or edits even when the first attempt failed.',
+    whatToDo: 'Store request IDs, inspect task status before retrying, and limit automated retries. Failed generations and retries should be checked in request logs and provider dashboards.',
+  },
+  {
+    symptom: 'Aggregator pricing does not match official model pricing',
+    cause: 'Third-party provider APIs and aggregators may use different billing units, markup, or routing behavior than the official API.',
+    whatToDo: 'Separate official API documentation from third-party and aggregator documentation. Confirm the exact price and billing unit on the endpoint you are actually calling.',
+  },
+  {
+    symptom: 'A model becomes unavailable during rollout',
+    cause: 'Model availability can change by provider, region, or account tier.',
+    whatToDo: 'Check live model pricing and current model listings before launch. Add fallback logic and avoid hard-coding unsupported assumptions about availability.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What does image generation API pricing usually depend on?',
+    a: 'Image generation API pricing depends on the provider and the workflow. Media generation pricing may be per token, credit, image, edit, or async task. Text-to-image, image editing, and image-to-image can each have different billing behavior.',
+  },
+  {
+    q: 'What is the difference between an official API, a third-party provider API, and an aggregator API?',
+    a: 'An official API is published directly by the model owner. A third-party provider API runs the model through that provider’s own infrastructure and billing rules. An aggregator API routes requests across multiple providers behind one interface. Pricing, availability, and retry behavior can differ across all three.',
+  },
+  {
+    q: 'Do failed image generations and retries cost money?',
+    a: 'Sometimes they do. Failed generations and retries should be checked in request logs and provider dashboards. Some providers bill on task creation or processing attempts, not only on successful output delivery.',
+  },
+  {
+    q: 'Why should I check live model pricing before building on an image API?',
+    a: 'Pricing changes, generation modes change, and model availability can change. Check live model pricing before launch so your estimate matches the exact mode, model, and provider path you plan to use.',
+  },
+  {
+    q: 'How should I test image API pricing safely?',
+    a: 'Test small before scaling. Run a small sample of text-to-image, image editing, and image-to-image requests, then compare request logs, usage records, and the provider dashboard to confirm actual billing behavior.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'Video Generation API Pricing', href: '/video-generation-api-pricing/', desc: 'Compare media API pricing units, async workflows, and retry cost caveats for video APIs.' },
+  { label: 'LLM Observability', href: '/llm-observability/', desc: 'Trace request IDs, retries, usage records, and billing signals across AI workflows.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="Media API"
+  h1={page.h1}
+  summary="Image generation API pricing, official vs third-party vs aggregator APIs, billing units, retry caveats, and how to test image workflows before scaling."
+  lastReviewed="June 2026"
+  readingTime="7 min read"
+  trackLabel="Media API"
+>
+  <AISummary
+    title="Image generation API pricing depends on the mode, the provider path, and the billing unit."
+    summary="Check whether the endpoint charges per token, credit, image, edit, or async task. Distinguish official APIs from third-party provider APIs and aggregator APIs. Failed generations and retries should be checked in request logs and provider dashboards. Test small before scaling."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers evaluating or integrating image generation APIs who need to understand pricing units, generation modes, billing caveats, and provider differences before building workflows. If you are comparing official APIs, third-party provider APIs, and aggregator APIs, this guide helps you review cost behavior before scaling image generation.
+  </p>
+
+  <h2>What image generation API pricing means</h2>
+  <p>
+    Image generation API pricing is not one fixed model. The same provider may price text-to-image, image editing, and image-to-image differently. Media generation pricing may be per token, credit, image, edit, or async task depending on the API and generation mode.
+  </p>
+  <p>
+    Before you build on an image API, identify:
+  </p>
+  <ul>
+    <li>The pricing unit for each workflow you plan to use.</li>
+    <li>Whether edits, masks, or variations are billed differently from new generations.</li>
+    <li>Whether the API uses synchronous delivery or async job handling.</li>
+    <li>Whether failed generations and retries create billable usage records.</li>
+  </ul>
+
+  <RutaCta />
+
+  <h2>Official API vs third-party provider vs aggregator API</h2>
+  <p>
+    Image generation APIs generally fall into three categories:
+  </p>
+  <ul>
+    <li><strong>Official API:</strong> The model owner provides the endpoint directly. Pricing, model versions, and usage rules come from the official provider documentation and dashboard.</li>
+    <li><strong>Third-party provider API:</strong> Another provider exposes image models through its own infrastructure, pricing rules, and limits. The model name may be familiar, but the billing behavior may differ from the official API.</li>
+    <li><strong>Aggregator API:</strong> A routing layer provides one interface across multiple providers. This can simplify integration, but the final billing unit and model availability depend on the aggregator and its upstream providers.</li>
+  </ul>
+  <p>
+    Do not assume pricing, retry behavior, or model access is identical across official, third-party, and aggregator endpoints. Check live model pricing on the exact path you plan to call.
+  </p>
+
+  <Checklist title="Image generation API pricing checklist" items={checklistItems} />
+
+  <h2>Pricing units: token, credit, image, edit, async task</h2>
+  <p>
+    Common image generation billing units include:
+  </p>
+  <ul>
+    <li><strong>Per token:</strong> Some image APIs use token-based billing for prompt or generation steps.</li>
+    <li><strong>Per credit:</strong> A provider deducts credits for each generation or edit action.</li>
+    <li><strong>Per image:</strong> Billing is tied to the number of images generated.</li>
+    <li><strong>Per edit:</strong> Image editing, masking, inpainting, or variations may have a separate unit cost.</li>
+    <li><strong>Per async task:</strong> Billing can start when the generation task is created, even if the output later fails.</li>
+  </ul>
+  <p>
+    Media generation pricing may be per token, credit, image, edit, or async task. Check live model pricing for the exact mode and output settings you plan to use.
+  </p>
+
+  <h2>Text-to-image, image editing, image-to-image</h2>
+  <p>
+    These workflows often have different pricing behavior:
+  </p>
+  <ul>
+    <li><strong>Text-to-image:</strong> Generates a new image from a prompt. Billing is often per image, per credit, or per task.</li>
+    <li><strong>Image editing:</strong> Applies masks, inpainting, outpainting, or targeted changes to an uploaded image. This may use a separate image-edit price.</li>
+    <li><strong>Image-to-image:</strong> Uses an input image as the starting point for a transformed output. Billing may differ from both text-to-image and editing APIs.</li>
+  </ul>
+  <p>
+    Treat these as separate billing paths in your estimates. Do not assume one quoted price applies to all image-generation modes.
+  </p>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>Failed generation and retry cost caveats</h2>
+  <p>
+    Failed image outputs do not always mean zero cost. Depending on the provider, retries, partial processing, and task creation can still generate billable usage.
+  </p>
+  <ul>
+    <li>Some providers bill on request or task creation rather than only on successful output delivery.</li>
+    <li>Automatic retries can multiply costs if each retry becomes a new billed operation.</li>
+    <li>Edits and image-to-image requests may create separate billing records from initial text-to-image generations.</li>
+    <li>Provider dashboards and usage records may show more detail than the response body alone.</li>
+  </ul>
+  <p>
+    Failed generations and retries should be checked in request logs and provider dashboards. Store request IDs and compare them against billing records before you scale up usage.
+  </p>
+
+  <h2>Model availability can change</h2>
+  <p>
+    Model availability can change by provider, account tier, region, safety setting, or rollout stage. An image model that is visible today may not remain available tomorrow, and an aggregator may route requests differently over time.
+  </p>
+  <p>
+    Before building around a specific image workflow:
+  </p>
+  <ul>
+    <li>Check live model pricing on the exact endpoint you plan to call.</li>
+    <li>Review current model listings, usage limits, and regional restrictions.</li>
+    <li>Plan fallback behavior for unavailable models or temporarily blocked modes.</li>
+    <li>Avoid unsupported promises about universal model availability.</li>
+  </ul>
+
+  <h2>Evidence to inspect</h2>
+  <EvidenceList items={evidenceItems} />
+
+  <h2>Small-scale testing checklist</h2>
+  <p>
+    Test small before scaling your image workflow:
+  </p>
+  <ul>
+    <li>Run a small sample for text-to-image, image editing, and image-to-image if you plan to support all three.</li>
+    <li>Compare request logs against usage records and the provider dashboard.</li>
+    <li>Check whether failed jobs, moderation blocks, and retries create billable entries.</li>
+    <li>Verify the actual cost per workflow instead of relying only on headline pricing.</li>
+    <li>Use a limited prepaid balance or a capped test budget before batch usage.</li>
+  </ul>
+
+  <h2>How RutaAPI fits</h2>
+  <p>
+    RutaAPI offers prepaid API credits that can help you test image workflows in a more controlled way before scaling. Check live model pricing, confirm current model availability, and validate the exact billing unit for your chosen workflow. Failed generations and retries should be checked in request logs and provider dashboards. Test small before scaling.
+  </p>
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>
