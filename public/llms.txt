@@ -26,3 +26,7 @@ Understand what drives Claude Code token cost, including model choice, long cont
 https://aiapiops.com/video-generation-api-pricing/
 Video Generation API Pricing: What to Check Before Building
 Video generation API pricing units, async workflows, polling, webhooks, failed generation cost and how to test before scaling.
+
+https://aiapiops.com/image-generation-api-pricing/
+Image Generation API Pricing: What to Check Before Building
+Image generation API pricing, official vs third-party vs aggregator APIs, billing units, retry caveats, and how to test image workflows before scaling.
