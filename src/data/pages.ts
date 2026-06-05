@@ -59,7 +59,7 @@ export const publicPages = [
     slug: 'openclaw-openrouter',
     title: 'OpenClaw OpenRouter: API Key and Model Routing',
     metaDescription:
-      'How to set up OpenClaw with OpenRouter, configure the OpenAI-compatible endpoint, manage API credits, handle 401 and 403 errors, and review token usage before scaling.',
+      'Set up OpenClaw with OpenRouter, review API credits, handle 401 and 403 errors, and check token usage before scaling agents.',
     h1: 'OpenClaw OpenRouter: What to Check Before Running Agents',
     canonical: 'https://aiapiops.com/openclaw-openrouter/',
     ogTitle: 'OpenClaw OpenRouter — API Key, Model Routing and Credits',
@@ -89,7 +89,7 @@ export const publicPages = [
     slug: 'image-generation-api-pricing',
     title: 'Image Generation API Pricing: Units and Workflow Checks',
     metaDescription:
-      'Understand image generation API pricing across official APIs, third-party providers and aggregators, including billing units, edits, retries and testing before scaling.',
+      'Compare image generation API pricing units, edits, retries, credits and usage records before scaling image workflows with paid APIs.',
     h1: 'Image Generation API Pricing: What to Check Before Building',
     canonical: 'https://aiapiops.com/image-generation-api-pricing/',
     ogTitle: 'Image Generation API Pricing — Official APIs, Providers and Billing Units',

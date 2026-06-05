@@ -8,6 +8,8 @@ const distDir = join(__dirname, '..', 'dist');
 const TITLE_RECOMMENDED_MIN = 30;
 const TITLE_RECOMMENDED_MAX = 60;
 const TITLE_HARD_MAX = 65;
+const META_DESCRIPTION_RECOMMENDED_MIN = 90;
+const META_DESCRIPTION_HARD_MAX = 160;
 
 const MEDIA_SLUGS = new Set([
   'video-generation-api-pricing',
@@ -36,6 +38,7 @@ async function checkSeo() {
   const htmlFiles = await getAllFiles(distDir, '');
 
   const titlesByValue = new Map();
+  const descriptionsByValue = new Map();
 
   for (const file of htmlFiles) {
     if (!file.endsWith('.html')) continue;
@@ -75,9 +78,24 @@ async function checkSeo() {
       titlesByValue.set(title, prev);
     }
 
-    if (!/<meta name="description"/i.test(content)) {
-      issues.push('Missing meta description');
+    const descriptionMatch = content.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
+    const metaDescription = descriptionMatch?.[1]?.trim() ?? '';
+
+    if (!metaDescription) {
+      issues.push('Missing or empty meta description');
+    } else {
+      const len = [...metaDescription].length;
+      if (len > META_DESCRIPTION_HARD_MAX) {
+        issues.push(`Meta description too long (${len} > ${META_DESCRIPTION_HARD_MAX})`);
+      } else if (len < META_DESCRIPTION_RECOMMENDED_MIN) {
+        issues.push(`Meta description too short (${len} < ${META_DESCRIPTION_RECOMMENDED_MIN})`);
+      }
+
+      const prev = descriptionsByValue.get(metaDescription) || [];
+      prev.push(file);
+      descriptionsByValue.set(metaDescription, prev);
     }
+
     if (!/<link rel="canonical"/i.test(content)) {
       issues.push('Missing canonical link');
     }
@@ -122,6 +140,13 @@ async function checkSeo() {
   for (const [title, files] of titlesByValue.entries()) {
     if (files.length <= 1) continue;
     console.log(`  [FAIL] Duplicate <title>: ${JSON.stringify(title)}`);
+    files.forEach(f => console.log(`        - ${f}`));
+    failed++;
+  }
+
+  for (const [description, files] of descriptionsByValue.entries()) {
+    if (files.length <= 1) continue;
+    console.log(`  [FAIL] Duplicate meta description: ${JSON.stringify(description)}`);
     files.forEach(f => console.log(`        - ${f}`));
     failed++;
   }
