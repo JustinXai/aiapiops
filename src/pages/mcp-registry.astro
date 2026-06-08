@@ -78,6 +78,10 @@ const faqItems = [
     q: 'What is a malicious MCP server?',
     a: 'A malicious MCP server is one that exposes tools designed to steal credentials, access files or data without authorization, or trigger paid API usage without clear disclosure. Even well-intentioned servers can become a risk if they mishandle environment variables or lack proper permission scoping.',
   },
+  {
+    q: 'What is MCP server registry expense?',
+    a: 'Browsing the MCP server registry is usually not the main bill. MCP registry cost and MCP server registry expense typically come after installation: tool calls that trigger LLM API usage, agent retries, external API requests, long context and automation loops. Registry metadata describes tools and install steps; it does not show running server API usage.',
+  },
 ];
 
 const relatedLinks = [
@@ -179,6 +183,17 @@ const relatedLinks = [
   </p>
   <p>
     Review the server documentation for credential handling guidance. Where possible, use scoped credentials managers or per-server environment namespaces.
+  </p>
+
+  <h2>MCP server registry cost vs running server API usage</h2>
+  <p>
+    The MCP server registry helps developers discover server metadata: package name, tool list, install instructions and publisher signals. Browsing or installing from the registry itself is usually not the main expense. When people search for MCP server registry expense or MCP registry cost, they are often asking about billable API usage after a server is connected.
+  </p>
+  <p>
+    Registry metadata tells you what tools exist and how to install them. It does not predict tool call cost, LLM API usage or downstream billing. The cost risk comes after installation, when an agent or client starts invoking tools. Each tool call may trigger model API requests, external API calls, agent retries, long context windows or automation loops that multiply usage.
+  </p>
+  <p>
+    Before scaling, check live model pricing for any models the server routes to. Model availability can change, so confirm current options with the provider. Test small before scaling: run a short session with a limited balance, then review request logs and usage records to compare actual API usage against what the registry entry implied.
   </p>
 
   <h2>Evidence to inspect</h2>

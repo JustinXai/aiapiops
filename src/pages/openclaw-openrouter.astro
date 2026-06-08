@@ -62,20 +62,24 @@ const failureModes = [
 
 const faqItems = [
   {
-    q: 'What does OpenClaw do with OpenRouter?',
-    a: 'OpenClaw is a coding agent that can route API calls through OpenRouter to access multiple models via a single OpenAI-compatible endpoint. OpenRouter acts as an aggregator API, providing a unified base URL and credit-based billing across many model providers.',
+    q: 'How do I connect OpenClaw to OpenRouter?',
+    a: 'Set the OpenAI-compatible base URL to https://openrouter.ai/api/v1, add your OpenRouter API key in OpenClaw configuration, and choose a model ID from the OpenRouter catalog. Confirm credits are loaded in your OpenRouter account, then run a short test session before longer agent workflows.',
+  },
+  {
+    q: 'Why can OpenClaw token usage increase quickly?',
+    a: 'OpenClaw may resend full conversation history on each turn, include file reads and tool outputs in the prompt, and retry failed requests with the same context. Each model on OpenRouter has separate input and output token pricing, so tool-heavy workflows can multiply API usage across turns.',
+  },
+  {
+    q: 'What should I check before running OpenClaw with a paid API key?',
+    a: 'Verify the base URL and API key, confirm credits are available, check that your chosen model ID is in your OpenRouter tier, and review token pricing for that model. Enable request logging, test with a small prepaid balance, check live model pricing, and review request logs and usage records before scaling.',
+  },
+  {
+    q: 'How do credits, model routing and 401/403 errors relate?',
+    a: 'OpenRouter routes requests to underlying providers based on the model ID you set in OpenClaw. Credits must be available before requests succeed. A 401 usually means a missing or invalid API key. A 403 often means the key is valid but lacks access to the requested model, or credits are insufficient for that route. Model availability can change, so confirm the model with the /v1/models endpoint before long runs.',
   },
   {
     q: 'What is an OpenAI-compatible endpoint?',
     a: 'An OpenAI-compatible endpoint means OpenClaw can send requests using the same format as the OpenAI API. The base URL is set to OpenRouter instead of OpenAI, and model IDs follow the OpenRouter catalog naming convention.',
-  },
-  {
-    q: 'How do I handle 401 and 403 errors with OpenClaw and OpenRouter?',
-    a: '401 means the API key is missing or invalid. 403 means the key is valid but lacks permission for the requested model or operation. Verify the key in the OpenRouter dashboard and confirm your subscription tier includes the model you are trying to use.',
-  },
-  {
-    q: 'Why does token usage spike with OpenRouter?',
-    a: 'Token usage can spike because each model has its own pricing per input and output token. Routing through OpenRouter adds overhead from the aggregator layer. OpenClaw may also send full conversation history with each request, which grows the context window and multiplies token costs across turns.',
   },
   {
     q: 'What are the security risks of using OpenClaw with OpenRouter?',
