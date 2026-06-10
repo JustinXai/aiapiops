@@ -1,0 +1,215 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'openclaw-api-key')!;
+
+const quickAnswerSteps = [
+  'Set your OpenClaw API key and confirm the Base URL before the first run.',
+  'Use an OpenAI-compatible endpoint and verify the exact model ID for model routing.',
+  'Confirm API credits are loaded and watch for 401 and 403 errors.',
+  'Monitor token usage, retries and file-heavy prompts during early tests.',
+  'Use a small prepaid API balance and test small before scaling.',
+];
+
+const checklistItems = [
+  'Store the OpenClaw API key in environment variables or a scoped secrets manager.',
+  'Confirm the Base URL points to the intended OpenAI-compatible endpoint.',
+  'Verify the chosen model ID exists in the provider catalog before running agents.',
+  'Check live model pricing and note that model availability can change.',
+  'Review API credits, rate limits and provider usage records before long runs.',
+  'Enable request logging for request IDs, token usage and error codes.',
+  'Test with a small prepaid API balance before production use.',
+];
+
+const evidenceItems = [
+  { label: 'OpenClaw config', value: 'API key source, Base URL and model ID settings' },
+  { label: 'Provider model catalog', value: '/v1/models or provider dashboard model list' },
+  { label: 'API credits balance', value: 'prepaid balance, billing page and current limits' },
+  { label: 'Request logs', value: 'request IDs, response codes, token usage and retries' },
+  { label: 'Usage records', value: 'provider dashboard totals during short test sessions' },
+];
+
+const failureModes = [
+  {
+    symptom: '401 Unauthorized or 403 Forbidden on startup',
+    cause: 'The OpenClaw API key is missing, invalid, revoked, blocked for the route, or the account lacks access to the selected model.',
+    whatToDo: 'Recheck the API key source, confirm the Base URL, verify API credits and confirm the model is allowed for that account and route.',
+  },
+  {
+    symptom: 'Model not found or 404 response',
+    cause: 'The configured model ID is wrong, outdated, or unavailable for the chosen OpenAI-compatible endpoint.',
+    whatToDo: 'Check the provider model catalog and compare the exact model ID in OpenClaw with the /v1/models response.',
+  },
+  {
+    symptom: '429 rate limit or timeout errors',
+    cause: 'Concurrent agent actions, retries, or provider-side limits are causing repeated request failures.',
+    whatToDo: 'Reduce concurrency, add backoff, shorten test runs and inspect request logs before scaling up automation.',
+  },
+  {
+    symptom: 'Token usage climbs faster than expected',
+    cause: 'OpenClaw may resend long context, include tool outputs and file reads, or retry full prompts after failures.',
+    whatToDo: 'Inspect token usage per request, trim context where possible and compare short test runs against usage records.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What does an OpenClaw API key control?',
+    a: 'An OpenClaw API key controls which provider account OpenClaw uses when it sends model requests. It determines which OpenAI-compatible endpoint, model routing rules, API credits and permission scope apply to the run.',
+  },
+  {
+    q: 'How do I set the Base URL for OpenClaw?',
+    a: 'Set the Base URL to the OpenAI-compatible endpoint you intend to use, then confirm the provider accepts standard chat-completions style requests. If you use OpenClaw OpenRouter, the Base URL usually points to the OpenRouter API endpoint instead of a single-model provider.',
+  },
+  {
+    q: 'Why do 401 and 403 errors happen with an OpenClaw API key?',
+    a: 'A 401 usually means the API key is missing, invalid or revoked. A 403 usually means the key is valid but blocked from the selected model, route or account tier, or the account cannot use that request path as configured.',
+  },
+  {
+    q: 'How does model routing affect OpenClaw runs?',
+    a: 'Model routing decides which underlying provider model receives each request. If the model ID is wrong or the route changes, OpenClaw can hit model not found responses, different pricing or different token usage patterns. Model availability can change, so verify live options before long runs.',
+  },
+  {
+    q: 'Why can token usage spike after I add a paid key?',
+    a: 'Once a paid key is active, OpenClaw can run longer tasks, larger context windows, tool calls, file reads and retries. That can multiply token usage quickly, especially when automation loops resend the same context across many steps.',
+  },
+  {
+    q: 'What is the safest way to test a new OpenClaw API key?',
+    a: 'Use a small prepaid API balance, run a short workflow, check live model pricing, review request logs and usage records, and test small before scaling. This helps you verify the Base URL, model routing and billing behavior before larger automation jobs.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'OpenClaw OpenRouter', href: '/openclaw-openrouter/', desc: 'Configure OpenClaw OpenRouter, model routing, credits and common errors.' },
+  { label: 'Claude Code Token Cost', href: '/claude-code-token-cost/', desc: 'See what drives token usage and API spending in agent workflows.' },
+  { label: 'LLM Observability', href: '/llm-observability/', desc: 'Review logs, request IDs, token usage and usage evidence.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="Agent API"
+  h1={page.h1}
+  summary="Configure an OpenClaw API key safely, set the right Base URL, review model routing, API credits, common errors and token usage before scaling agent workflows."
+  lastReviewed="June 2026"
+  readingTime="7 min read"
+  trackLabel="Agent API"
+>
+  <AISummary
+    title="An OpenClaw API key controls routing, credits and billing exposure."
+    summary="Confirm the OpenAI-compatible endpoint, Base URL, model routing and API credits before longer runs. Review 401 and 403 errors, token usage and logs early so you can test small before scaling."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers configuring an OpenClaw API key for the first time, moving from test access to paid access, or reviewing why OpenClaw OpenRouter runs are returning errors or consuming more API credits than expected.
+  </p>
+
+  <h2>What an OpenClaw API key controls</h2>
+  <p>
+    An OpenClaw API key determines which provider account OpenClaw uses for model requests. In practice, that means it influences your OpenAI-compatible endpoint, available model routing options, API credits, rate limits and the usage records that appear in the provider dashboard.
+  </p>
+  <p>
+    The key does not only unlock access. It also defines where billing risk starts. Once OpenClaw can make paid requests, long context windows, retries, tool calls and automation loops can all increase token usage quickly.
+  </p>
+
+  <RutaCta />
+
+  <h2>API key, Base URL and OpenAI-compatible endpoint</h2>
+  <p>
+    OpenClaw usually expects an OpenAI-compatible endpoint. That means your Base URL must point to a provider that accepts the same request format OpenClaw is sending.
+  </p>
+  <ul>
+    <li><strong>OpenClaw API key:</strong> Loaded from environment variables or a secure config path.</li>
+    <li><strong>Base URL:</strong> The provider endpoint OpenClaw sends requests to.</li>
+    <li><strong>OpenAI-compatible endpoint:</strong> A route that accepts OpenAI-style chat request formats.</li>
+  </ul>
+  <p>
+    If the Base URL is wrong, a valid key can still fail. Check the provider documentation, verify the exact endpoint and confirm the account behind the key is allowed to use that route.
+  </p>
+
+  <h2>OpenRouter model routing and model IDs</h2>
+  <p>
+    In OpenClaw OpenRouter setups, model routing decides which underlying provider model handles the request. That makes the model ID just as important as the key itself.
+  </p>
+  <p>
+    A valid OpenClaw API key can still fail if the chosen model ID is outdated, account-restricted or not available on that route. Check live model pricing, verify the provider model catalog and remember that model availability can change.
+  </p>
+
+  <h2>Credits, prepaid balance and 401/403 errors</h2>
+  <p>
+    API credits and prepaid balance matter before you run longer jobs. A 401 usually points to a missing or invalid key. A 403 usually means the key is valid but the account lacks access to the selected model, route or tier.
+  </p>
+  <p>
+    Before scaling, confirm the account has credits loaded, check whether the route has separate permissions, and compare response errors with your usage records to see whether billing or access controls are involved.
+  </p>
+
+  <h2>Model not found, rate limits and timeout checks</h2>
+  <p>
+    Model not found errors usually come from a wrong or stale model ID. Rate limits and timeouts often show up when OpenClaw runs many steps, resends long prompts or retries too aggressively.
+  </p>
+  <p>
+    Confirm the model ID against the provider catalog, inspect rate limit responses and shorten test runs before concluding that the OpenClaw API key itself is the problem.
+  </p>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>Why OpenClaw token usage can spike</h2>
+  <p>
+    Token usage can rise fast when OpenClaw reads files, includes tool output, keeps long conversation history and retries failed requests with the same prompt. Paid access often makes these patterns more visible because runs become longer and more automated.
+  </p>
+  <ul>
+    <li>Long context raises input token counts on every step.</li>
+    <li>Tool calls and file reads expand prompt size and model responses.</li>
+    <li>Retries can resend the same expensive context multiple times.</li>
+    <li>Automation loops can multiply token usage across many similar calls.</li>
+  </ul>
+  <p>
+    Link this review with <a href="/claude-code-token-cost/">Claude Code Token Cost</a> for cost drivers and <a href="/llm-observability/">LLM Observability</a> for logs, request IDs and usage evidence.
+  </p>
+
+  <h2>Security checklist before using a paid API key</h2>
+  <Checklist title="OpenClaw API key safety checklist" items={checklistItems} />
+  <p>
+    Keep the OpenClaw API key out of shared config files and avoid using a broad, long-lived credential when a scoped key is possible. Review where the key is stored, how it is injected and whether logs or tool output can expose it.
+  </p>
+
+  <h2>Small prepaid testing workflow</h2>
+  <p>
+    Start with a small prepaid API balance and a short, observable workflow. Test small before scaling so you can verify model routing, Base URL correctness and early token usage without exposing a large budget.
+  </p>
+  <ul>
+    <li>Load a small prepaid API balance.</li>
+    <li>Run a short OpenClaw task with one known model ID.</li>
+    <li>Check live model pricing before trying larger runs.</li>
+    <li>Review request logs, request IDs and usage records after the test.</li>
+    <li>Only then expand concurrency, context size or automation depth.</li>
+  </ul>
+
+  <h2>How RutaAPI fits without claiming support for every model</h2>
+  <p>
+    RutaAPI can be useful when you want prepaid API credits and a smaller-budget testing path for OpenClaw workflows. Check live model pricing before you choose a route, and remember that model availability can change. Do not assume every model mentioned in ecosystem discussions is available on every provider or every account tier.
+  </p>
+
+  <h2>Evidence to inspect</h2>
+  <EvidenceList items={evidenceItems} />
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>

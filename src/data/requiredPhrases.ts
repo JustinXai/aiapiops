@@ -27,4 +27,18 @@ export const requiredPhrases = {
     'token usage',
     'billing deltas',
   ],
+  'openclaw-api-key': [
+    'openclaw api key',
+    'openclaw openrouter',
+    'openai-compatible endpoint',
+    'base url',
+    'model routing',
+    'api credits',
+    '401 and 403 errors',
+    'token usage',
+    'small prepaid api balance',
+    'check live model pricing',
+    'model availability can change',
+    'test small before scaling',
+  ],
 };

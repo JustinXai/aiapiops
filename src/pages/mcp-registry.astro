@@ -82,6 +82,10 @@ const faqItems = [
     q: 'What is MCP server registry expense?',
     a: 'Browsing the MCP server registry is usually not the main bill. MCP registry cost and MCP server registry expense typically come after installation: tool calls that trigger LLM API usage, agent retries, external API requests, long context and automation loops. Registry metadata describes tools and install steps; it does not show running server API usage.',
   },
+  {
+    q: 'Is an MCP server registry useful for enterprise teams?',
+    a: 'Yes, an MCP server registry can be useful for enterprise teams because it helps with namespace ownership checks, metadata review, installation instructions, security review, tool-call auditing and API usage evidence gathering. Registry metadata helps discovery, but enterprise cost risk comes from running servers, tools, LLM API calls and automation after installation. Model availability can change, so teams should review request logs and usage records during controlled rollouts.',
+  },
 ];
 
 const relatedLinks = [

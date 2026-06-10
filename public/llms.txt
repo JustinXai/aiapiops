@@ -19,6 +19,10 @@ https://aiapiops.com/openclaw-openrouter/
 OpenClaw OpenRouter: What to Check Before Running Agents
 How to set up OpenClaw with OpenRouter, configure the OpenAI-compatible endpoint, manage API credits, handle 401 and 403 errors, and review token usage before scaling.
 
+https://aiapiops.com/openclaw-api-key/
+OpenClaw API Key: What to Check Before Using Paid Access
+Configure an OpenClaw API key, Base URL, model routing, API credits, 401 and 403 errors, and token usage before scaling.
+
 https://aiapiops.com/claude-code-token-cost/
 Claude Code Token Cost: What to Check Before Scaling
 Understand what drives Claude Code token cost, including model choice, long context, tool calls, retries, file reads and automation patterns before scaling.

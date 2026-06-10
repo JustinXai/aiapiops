@@ -71,6 +71,21 @@ export const publicPages = [
     ],
   },
   {
+    slug: 'openclaw-api-key',
+    title: 'OpenClaw API Key: Base URL, Credits and Errors',
+    metaDescription:
+      'Configure an OpenClaw API key, Base URL, model routing, API credits, 401 and 403 errors, and token usage before scaling.',
+    h1: 'OpenClaw API Key: What to Check Before Using Paid Access',
+    canonical: 'https://aiapiops.com/openclaw-api-key/',
+    ogTitle: 'OpenClaw API Key — Base URL, Credits and Model Routing',
+    ogDescription:
+      'Configure an OpenClaw API key safely and review credits, model routing and token usage.',
+    breadcrumb: [
+      { label: 'Home', url: 'https://aiapiops.com/' },
+      { label: 'Agent API', url: 'https://aiapiops.com/openclaw-api-key/' },
+    ],
+  },
+  {
     slug: 'claude-code-token-cost',
     title: 'Claude Code Token Cost: What Drives API Spending',
     metaDescription:
