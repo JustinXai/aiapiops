@@ -7,20 +7,58 @@
 - Confirm the production deployment hash matches the intended commit.
 - Purge cache when the live domain serves stale content.
 
-## Production live check commands
+## Production live check
+
+After deployment, run the automated production check:
+
+```bash
+npm run check:prod
+```
+
+This script performs cache-busted fetches against the live custom domain (`https://aiapiops.com` by default, or set `BASE` env var) and verifies:
+
+- 9 public pages return 200
+- sitemap.xml, robots.txt, llms.txt return 200
+- sitemap.xml has 9 URLs, no /404, no `aiapiops.pages.dev` references
+- llms.txt has 9 URLs, no /404
+- robots.txt references `https://aiapiops.com/sitemap.xml`
+- 26 planned paths return 404
+
+Override the base URL with an environment variable if needed:
+
+```bash
+BASE=https://aiapiops.pages.dev npm run check:prod
+```
+
+## Manual production check commands
 
 Use cache-busted fetches against the live custom domain and save the responses before scanning:
 
 ```bash
-curl.exe -L -H "Cache-Control: no-cache" "https://aiapiops.com/openclaw-openrouter/?v=%RANDOM%%RANDOM%" -o prod-openclaw.html
-curl.exe -L -H "Cache-Control: no-cache" "https://aiapiops.com/claude-code-token-cost/?v=%RANDOM%%RANDOM%" -o prod-claude.html
-curl.exe -L -H "Cache-Control: no-cache" "https://aiapiops.com/video-generation-api-pricing/?v=%RANDOM%%RANDOM%" -o prod-video.html
+curl.exe -L -H "Cache-Control: no-cache" "https://aiapiops.com/mcp-registry/?v=%RANDOM%%RANDOM%" -o prod-mcp-registry.html
 curl.exe -L -H "Cache-Control: no-cache" "https://aiapiops.com/sitemap.xml?v=%RANDOM%%RANDOM%" -o prod-sitemap.xml
+curl.exe -L -H "Cache-Control: no-cache" "https://aiapiops.com/llms.txt?v=%RANDOM%%RANDOM%" -o prod-llms.txt
+curl.exe -L -H "Cache-Control: no-cache" "https://aiapiops.com/robots.txt?v=%RANDOM%%RANDOM%" -o prod-robots.txt
 ```
 
 ## Cache purge note
 
 If production HTML contradicts local `dist/`, purge Cloudflare cache and recheck the live HTML.
+
+## Exact URLs to verify on production
+
+- `https://aiapiops.com/`
+- `https://aiapiops.com/mcp-server-chatgpt/`
+- `https://aiapiops.com/mcp-registry/`
+- `https://aiapiops.com/llm-observability/`
+- `https://aiapiops.com/openclaw-openrouter/`
+- `https://aiapiops.com/openclaw-api-key/`
+- `https://aiapiops.com/claude-code-token-cost/`
+- `https://aiapiops.com/video-generation-api-pricing/`
+- `https://aiapiops.com/image-generation-api-pricing/`
+- `https://aiapiops.com/sitemap.xml`
+- `https://aiapiops.com/robots.txt`
+- `https://aiapiops.com/llms.txt`
 
 ## GSC sitemap submission workflow
 

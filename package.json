@@ -12,7 +12,10 @@
     "check:seo": "node scripts/check-seo.mjs",
     "check:jsonld": "node scripts/check-jsonld.mjs",
     "check:public-pages": "node scripts/check-public-pages.mjs",
-    "verify": "npm run build && npm run check:public-pages && npm run check:content && npm run check:links && npm run check:claims && npm run check:seo && npm run check:jsonld"
+    "check:static-files": "node scripts/check-static-files.mjs",
+    "check:duplicate-numbering": "node scripts/check-duplicate-numbering.mjs",
+    "check:prod": "node scripts/prod-live-check.mjs",
+    "verify": "npm run build && npm run check:public-pages && npm run check:content && npm run check:links && npm run check:claims && npm run check:seo && npm run check:jsonld && npm run check:static-files && npm run check:duplicate-numbering"
   },
   "dependencies": {
     "astro": "^5.6.1"
