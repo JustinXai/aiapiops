@@ -86,6 +86,14 @@ const faqItems = [
     q: 'Is an MCP server registry useful for enterprise teams?',
     a: 'Yes, an MCP server registry can be useful for enterprise teams because it helps with namespace ownership checks, metadata review, installation instructions, security review, tool-call auditing and API usage evidence gathering. Registry metadata helps discovery, but enterprise cost risk comes from running servers, tools, LLM API calls and automation after installation. Model availability can change, so teams should review request logs and usage records during controlled rollouts.',
   },
+  {
+    q: 'How do I register an MCP server in the registry?',
+    a: 'To register an MCP server, prepare the server metadata in a server.json file, choose a publisher namespace you can verify, and publish the metadata to the registry using the supported publishing flow. The metadata should describe the server name, package or remote server URL, installation instructions, required environment variables, and the tools or resources the server exposes. Publishing improves discovery, but each MCP client, marketplace, or host may still have its own installation, review, authentication, and compatibility requirements.',
+  },
+  {
+    q: 'What should I check before publishing an MCP server to a registry?',
+    a: 'Before publishing, confirm that the server follows the MCP specification, the package or remote endpoint is publicly reachable, the server.json metadata matches the real package or URL, and the namespace represents your publisher identity. Also review tool permissions, environment variables, authentication requirements, source repository signals, and security notes. A registry listing helps users discover the server, but it does not replace a production security review.',
+  },
 ];
 
 const relatedLinks = [
