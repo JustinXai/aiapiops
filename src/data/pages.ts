@@ -116,6 +116,21 @@ export const publicPages = [
     ],
   },
   {
+    slug: 'claude-fable-5-api',
+    title: 'Claude Fable 5 API: Model ID, Endpoint and Provider Setup',
+    metaDescription:
+      'Configure Claude Fable 5 API access with the model ID, endpoint checks, provider availability, authentication, tool-use cost signals, and common setup errors.',
+    h1: 'Claude Fable 5 API: Model ID, Endpoint and Provider Setup',
+    canonical: 'https://aiapiops.com/claude-fable-5-api/',
+    ogTitle: 'Claude Fable 5 API — Model ID, Endpoint and Provider Setup',
+    ogDescription:
+      'Configure Claude Fable 5 API access: model ID, endpoint, provider availability, authentication, tool-use overhead and common setup errors.',
+    breadcrumb: [
+      { label: 'Home', url: 'https://aiapiops.com/' },
+      { label: 'Claude Fable 5 API', url: 'https://aiapiops.com/claude-fable-5-api/' },
+    ],
+  },
+  {
     slug: 'video-generation-api-pricing',
     title: 'Video Generation API Pricing: Units and Workflows',
     metaDescription:

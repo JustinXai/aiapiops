@@ -1,0 +1,252 @@
+---
+import ArticleShell from '../components/content/ArticleShell.astro';
+import AISummary from '../components/content/AISummary.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import Checklist from '../components/content/Checklist.astro';
+import EvidenceList from '../components/content/EvidenceList.astro';
+import FailureModes from '../components/content/FailureModes.astro';
+import FAQBlock from '../components/content/FAQBlock.astro';
+import RelatedPages from '../components/content/RelatedPages.astro';
+import RutaCta from '../components/content/RutaCta.astro';
+import { publicPages } from '../data/pages';
+
+const page = publicPages.find(p => p.slug === 'claude-fable-5-api')!;
+
+const quickAnswerSteps = [
+  'Use model ID `claude-fable-5` in your API request.',
+  'Confirm your provider supports `claude-fable-5` before deploying.',
+  'Authenticate with your API key and test with a small request.',
+  'Track input tokens, output tokens, prompt caching and tool call overhead.',
+  'Monitor for 401, 403, model-not-found and rate-limit errors.',
+];
+
+const checklistItems = [
+  'Verify `claude-fable-5` is available through your chosen provider.',
+  'Check the provider-specific endpoint for Claude Fable 5.',
+  'Confirm your API key has permission to use `claude-fable-5`.',
+  'Test a chat completion request with a small payload first.',
+  'Log usage.prompt_tokens and usage.completion_tokens from the response.',
+  'Review prompt caching behavior if your client supports it.',
+  'Test tool definitions and tool_use calls to measure token overhead.',
+  'Check rate limits for `claude-fable-5` with your provider.',
+];
+
+const evidenceItems = [
+  { label: 'Anthropic models overview', value: 'confirmed model ID and capabilities' },
+  { label: 'Anthropic pricing page', value: 'input and output token pricing, context window size' },
+  { label: 'Provider model endpoint', value: 'verify `claude-fable-5` is listed in your provider /v1/models response' },
+  { label: 'Request logs', value: 'token counts, request IDs, cache misses and hits per call' },
+];
+
+const failureModes = [
+  {
+    symptom: 'model_not_found error on every request',
+    cause: '`claude-fable-5` is not available through your current provider, or the provider has not yet added it.',
+    whatToDo: 'Check your provider\'s /v1/models endpoint to confirm `claude-fable-5` is listed. If unavailable, try a different provider or fall back to a confirmed model.',
+  },
+  {
+    symptom: '401 Unauthorized on valid API key',
+    cause: 'The API key lacks permission for `claude-fable-5`, or you are using the wrong endpoint for your provider.',
+    whatToDo: 'Verify the API key has the correct permissions. Check whether your provider uses a different base URL or authentication header format.',
+  },
+  {
+    symptom: '403 Forbidden after a few successful requests',
+    cause: 'Your account has exceeded the rate limit for `claude-fable-5`, or the model requires an additional agreement or upgrade to access.',
+    whatToDo: 'Check your provider dashboard for rate limits on `claude-fable-5`. Review whether you have accepted any required model use agreements.',
+  },
+  {
+    symptom: 'Responses return short or empty despite long prompts',
+    cause: 'A safety classifier or content filter is restricting output on your prompts, or the model is cutting off at the maximum tokens limit.',
+    whatToDo: 'Review which content triggers the safety filter. Check the max_tokens setting. Test with a simpler prompt to isolate the cause.',
+  },
+  {
+    symptom: 'Token cost is higher than expected for short tasks',
+    cause: 'Long system prompts, large tool definitions, or conversation history sent with each request can inflate input token counts.',
+    whatToDo: 'Log usage.prompt_tokens per request. Audit system prompt length, tool definitions and how much history is included in each call.',
+  },
+  {
+    symptom: 'Rate limit reached on first request',
+    cause: '`claude-fable-5` may have lower default rate limits than other Claude models, especially on new provider accounts.',
+    whatToDo: 'Check the provider rate limit documentation for `claude-fable-5`. Implement exponential backoff and respect Retry-After headers.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What is the Claude Fable 5 API model ID?',
+    a: 'The API model ID is `claude-fable-5`. Use this value in the `model` field of your chat completion request. Confirm the exact model ID against the Anthropic models overview before deploying.',
+  },
+  {
+    q: 'Which endpoint should I use for Claude Fable 5?',
+    a: 'Use your provider\'s base URL with the `/v1/messages` or `/v1/chat/completions` endpoint. Direct Anthropic API uses `https://api.anthropic.com/v1/messages`. Other providers may use different base URLs — check their documentation.',
+  },
+  {
+    q: 'Which providers offer Claude Fable 5?',
+    a: 'Claude Fable 5 is available through Anthropic Direct, AWS Bedrock and other platforms. Availability varies by provider and region. Check each provider\'s models documentation to confirm whether `claude-fable-5` is currently listed. Provider availability can change.',
+  },
+  {
+    q: 'Does Claude Fable 5 support tool use?',
+    a: 'Claude Fable 5 supports tool definitions and tool use. Tool definitions, tool_use inputs and tool_result outputs all contribute to input token counts. Test tool call overhead before scaling agent workflows that rely on `claude-fable-5`.',
+  },
+  {
+    q: 'Can Claude Fable 5 work with MCP servers?',
+    a: 'MCP compatibility depends on your client and the specific MCP server. Claude Fable 5 supports tool use through the API, but MCP server compatibility must be tested in your specific setup. Do not assume universal MCP compatibility without verification.',
+  },
+  {
+    q: 'How do I track Claude Fable 5 token usage?',
+    a: 'Capture usage.prompt_tokens, usage.completion_tokens and usage.cache_creation_input_tokens (if prompt caching is used) from each API response. Log these alongside the request ID. Aggregate across sessions to reconcile against provider billing. Tool calls, tool definitions and conversation history all add to input token counts.',
+  },
+  {
+    q: 'What should I check if Claude Fable 5 returns model not found?',
+    a: 'First, check whether `claude-fable-5` is listed in your provider\'s /v1/models response. If it is not listed, the provider has not yet added support. If it is listed but still returns model_not_found, verify your API key permissions and that you are using the correct endpoint.',
+  },
+  {
+    q: 'Is Claude Fable 5 available in GitHub Copilot?',
+    a: 'GitHub Copilot uses its own model selection and does not expose direct API access to `claude-fable-5`. For programmatic agent workflows with Claude Fable 5, use the Anthropic API or a supported third-party provider.',
+  },
+];
+
+const relatedLinks = [
+  { label: 'Claude Code Token Cost', href: '/claude-code-token-cost/', desc: 'What drives Claude Code token cost, including model choice and tool call overhead.' },
+  { label: 'LLM Observability', href: '/llm-observability/', desc: 'Trace token usage, request IDs and billing signals across agent workflows.' },
+  { label: 'MCP Server for ChatGPT', href: '/mcp-server-chatgpt/', desc: 'Review MCP server setup and tool permission checks before connecting.' },
+  { label: 'OpenClaw OpenRouter', href: '/openclaw-openrouter/', desc: 'OpenRouter model routing and agent API setup.' },
+];
+---
+
+<ArticleShell
+  title={page.title}
+  metaDescription={page.metaDescription}
+  canonical={page.canonical}
+  ogTitle={page.ogTitle}
+  ogDescription={page.ogDescription}
+  breadcrumb={page.breadcrumb}
+  category="Agent API"
+  h1={page.h1}
+  summary="Configure Claude Fable 5 API access: model ID, endpoint checks, provider availability, authentication, tool-use overhead, token tracking and common setup errors."
+  lastReviewed="June 2026"
+  readingTime="7 min read"
+  trackLabel="Agent API"
+>
+  <AISummary
+    title="Claude Fable 5 API access requires verifying the model ID, provider availability and authentication before running agents."
+    summary="Use model ID `claude-fable-5`. Confirm provider support. Test authentication. Track token usage, tool call overhead and prompt caching. Monitor for 401, 403, model-not-found and rate-limit errors."
+  />
+
+  <QuickAnswer steps={quickAnswerSteps} />
+
+  <h2>Who this is for</h2>
+  <p>
+    Developers building agent workflows who want to configure Claude Fable 5 API access. If you are evaluating, setting up or debugging Claude Fable 5 through any provider, this guide helps you verify the model ID, confirm provider support, configure authentication and track token usage before scaling.
+  </p>
+
+  <h2>What Claude Fable 5 is for</h2>
+  <p>
+    Claude Fable 5 is a Claude model positioned for demanding reasoning and long-horizon agentic work. It is designed for complex coding, multi-step problem solving and workflows that require sustained context over extended sessions. Model availability, pricing, rate limits and data handling may vary by provider and region. Check current provider documentation before production use.
+  </p>
+
+  <h2>Model ID and API endpoint</h2>
+  <p>
+    The API model ID for Claude Fable 5 is <code>claude-fable-5</code>. Use this exact value in the <code>model</code> field of your chat completion request.
+  </p>
+  <p>
+    The endpoint you use depends on your provider:
+  </p>
+  <ul>
+    <li><strong>Anthropic Direct:</strong> <code>https://api.anthropic.com/v1/messages</code></li>
+    <li><strong>AWS Bedrock:</strong> Provider-specific endpoint — check the Bedrock model card for <code>claude-fable-5</code></li>
+    <li><strong>Other providers:</strong> Refer to the provider documentation for the correct base URL and authentication method</li>
+  </ul>
+  <p>
+    Confirm the exact model ID against the <a href="https://docs.anthropic.com/en/docs/about-claude/models">Anthropic models overview</a> before deploying. Model IDs can change between releases.
+  </p>
+
+  <RutaCta />
+
+  <h2>Provider availability checklist</h2>
+  <p>
+    Claude Fable 5 availability varies across providers. Before building on it:
+  </p>
+  <ul>
+    <li><strong>Anthropic Direct:</strong> Available — check the <a href="https://docs.anthropic.com/en/docs/about-claude/models">Anthropic models overview</a> for current status.</li>
+    <li><strong>AWS Bedrock:</strong> Check the Bedrock model card for <code>claude-fable-5</code>. Availability may be region-specific.</li>
+    <li><strong>Google Vertex AI:</strong> Check the Vertex AI model registry for availability.</li>
+    <li><strong>Microsoft Foundry:</strong> Check the Foundry model catalog for availability.</li>
+    <li><strong>OpenRouter:</strong> Third-party availability — check the OpenRouter models page. Treat OpenRouter as a third-party note, not a primary source.</li>
+  </ul>
+  <p>
+    For each provider: check the current provider documentation before production use. Availability can change.
+  </p>
+
+  <Checklist title="Claude Fable 5 setup checklist" items={checklistItems} />
+
+  <h2>Authentication and configuration</h2>
+  <p>
+    Standard API key authentication applies. The specific format depends on your provider:
+  </p>
+  <ul>
+    <li><strong>API key:</strong> Set in the <code>Authorization</code> header as <code>Bearer &lt;key&gt;</code>.</li>
+    <li><strong>Environment variables:</strong> Store the API key in an environment variable rather than hardcoding it.</li>
+    <li><strong>Provider-specific credentials:</strong> AWS Bedrock uses IAM roles. Google Vertex AI uses service accounts. Microsoft Foundry uses Azure AD tokens. Refer to each provider\'s documentation.</li>
+  </ul>
+  <p>
+    Test authentication with a small request before running any agent workflow.
+  </p>
+
+  <h2>Tool use and agent workflow notes</h2>
+  <p>
+    Claude Fable 5 supports tool definitions, <code>tool_use</code> calls and <code>tool_result</code> outputs through the standard API. When building agent workflows:
+  </p>
+  <ul>
+    <li>Tool definitions add input tokens to every request that includes them.</li>
+    <li>The <code>tool_use</code> input and the <code>tool_result</code> output are both added to the context window.</li>
+    <li>Large tool schemas or verbose tool descriptions can increase input token counts significantly.</li>
+    <li>Prompt caching (where supported by the provider) can reduce costs for repeated tool call patterns.</li>
+    <li>MCP server compatibility must be tested per client and per server — do not assume universal MCP compatibility.</li>
+  </ul>
+
+  <h2>Token usage and cost tracking</h2>
+  <p>
+    Claude Fable 5 pricing follows the standard input/output token model. Costs to track:
+  </p>
+  <ul>
+    <li><strong>Input tokens:</strong> System prompt, conversation history, tool definitions, tool inputs.</li>
+    <li><strong>Output tokens:</strong> Model responses and tool call requests.</li>
+    <li><strong>Prompt caching:</strong> If your client supports it, cache_creation_input_tokens and cache_read_input_tokens appear in the usage response.</li>
+    <li><strong>Tool call overhead:</strong> Each round of tool calls adds tokens from the tool result fed back to the model.</li>
+    <li><strong>Failed requests:</strong> Some providers charge for blocked or filtered requests — check your provider\'s policy.</li>
+    <li><strong>Retry count:</strong> Each retry resends the full input context.</li>
+  </ul>
+  <p>
+    Capture <code>usage.prompt_tokens</code>, <code>usage.completion_tokens</code> and <code>usage.cache_creation_input_tokens</code> from every response. Log request IDs. Reconcile against the provider billing dashboard.
+  </p>
+
+  <FailureModes modes={failureModes} />
+
+  <h2>Usage records and billing evidence</h2>
+  <p>
+    To reconcile Claude Fable 5 usage against billing:
+  </p>
+  <EvidenceList items={evidenceItems} />
+
+  <h2>Small prepaid testing checklist</h2>
+  <p>
+    Before scaling Claude Fable 5 in production:
+  </p>
+  <ul>
+    <li>Send a small chat completion request and verify <code>claude-fable-5</code> responds correctly.</li>
+    <li>Capture token usage from the first response and estimate per-request cost.</li>
+    <li>Test a tool call round and measure the additional token overhead.</li>
+    <li>Check the provider /v1/models response to confirm <code>claude-fable-5</code> is visible.</li>
+    <li>Load a small prepaid API balance and compare actual billing against estimates.</li>
+    <li>Test your error handling for 401, 403, model_not_found and rate-limit responses.</li>
+  </ul>
+
+  <h2>How RutaAPI fits</h2>
+  <p>
+    RutaAPI offers prepaid API credits that allow you to test Claude Fable 5 in a controlled way. Load a small balance, run a representative agent task, and compare actual token usage against your estimates. Test small before scaling. Model availability can change — verify <code>claude-fable-5</code> is listed in your provider\'s /v1/models response before committing to large workloads. Actual billing depends on token usage and provider pricing.
+  </p>
+
+  <FAQBlock items={faqItems} />
+  <RelatedPages links={relatedLinks} />
+</ArticleShell>

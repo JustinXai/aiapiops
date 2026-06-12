@@ -66,7 +66,7 @@ npm run check:prod
 
 This runs against the live `https://aiapiops.com` domain (or `BASE` env var) and checks:
 
-- 9 public pages return 200
+- 10 public pages return 200
 - sitemap.xml, robots.txt, llms.txt return 200
 - sitemap.xml has 9 URLs, no /404, no `aiapiops.pages.dev` references
 - llms.txt has 9 URLs, no /404

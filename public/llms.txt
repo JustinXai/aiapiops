@@ -27,6 +27,10 @@ https://aiapiops.com/claude-code-token-cost/
 Claude Code Token Cost: What to Check Before Scaling
 Understand what drives Claude Code token cost, including model choice, long context, tool calls, retries, file reads and automation patterns before scaling.
 
+https://aiapiops.com/claude-fable-5-api/
+Claude Fable 5 API: Model ID, Endpoint and Provider Setup
+Configure Claude Fable 5 API access: model ID, endpoint checks, provider availability, authentication, tool-use cost signals, and common setup errors.
+
 https://aiapiops.com/video-generation-api-pricing/
 Video Generation API Pricing: What to Check Before Building
 Video generation API pricing units, async workflows, polling, webhooks, failed generation cost and how to test before scaling.

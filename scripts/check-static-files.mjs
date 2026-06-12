@@ -13,6 +13,7 @@ const PUBLIC_CANONICAL_URLS = [
   'https://aiapiops.com/openclaw-openrouter/',
   'https://aiapiops.com/openclaw-api-key/',
   'https://aiapiops.com/claude-code-token-cost/',
+  'https://aiapiops.com/claude-fable-5-api/',
   'https://aiapiops.com/video-generation-api-pricing/',
   'https://aiapiops.com/image-generation-api-pricing/',
 ];

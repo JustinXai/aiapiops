@@ -15,6 +15,7 @@ const EXPECTED_HTML_PAGES = [
   'openclaw-openrouter/index.html',
   'openclaw-api-key/index.html',
   'claude-code-token-cost/index.html',
+  'claude-fable-5-api/index.html',
   'video-generation-api-pricing/index.html',
   'image-generation-api-pricing/index.html',
 ];

@@ -15,6 +15,7 @@ const PUBLIC_PAGES = [
   '/openclaw-openrouter/',
   '/openclaw-api-key/',
   '/claude-code-token-cost/',
+  '/claude-fable-5-api/',
   '/video-generation-api-pricing/',
   '/image-generation-api-pricing/',
 ];

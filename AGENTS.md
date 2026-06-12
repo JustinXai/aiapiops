@@ -11,6 +11,7 @@ AI API Ops is an English-language developer site for operating AI agents and med
   - `/llm-observability/`
   - `/openclaw-openrouter/`
   - `/claude-code-token-cost/`
+  - `/claude-fable-5-api/`
   - `/video-generation-api-pricing/`
 - Phase 1.1 is the current public release line.
 - Planned pages must remain planned until they are complete, reviewed, and explicitly moved into public routing.
@@ -24,6 +25,7 @@ AI API Ops is an English-language developer site for operating AI agents and med
 - https://aiapiops.com/llm-observability/
 - https://aiapiops.com/openclaw-openrouter/
 - https://aiapiops.com/claude-code-token-cost/
+- https://aiapiops.com/claude-fable-5-api/
 - https://aiapiops.com/video-generation-api-pricing/
 
 ## Current positioning

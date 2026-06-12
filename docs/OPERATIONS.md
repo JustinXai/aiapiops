@@ -17,10 +17,10 @@ npm run check:prod
 
 This script performs cache-busted fetches against the live custom domain (`https://aiapiops.com` by default, or set `BASE` env var) and verifies:
 
-- 9 public pages return 200
+- 10 public pages return 200
 - sitemap.xml, robots.txt, llms.txt return 200
-- sitemap.xml has 9 URLs, no /404, no `aiapiops.pages.dev` references
-- llms.txt has 9 URLs, no /404
+- sitemap.xml has 10 URLs, no /404, no `aiapiops.pages.dev` references
+- llms.txt has 10 URLs, no /404
 - robots.txt references `https://aiapiops.com/sitemap.xml`
 - 26 planned paths return 404
 
@@ -54,6 +54,7 @@ If production HTML contradicts local `dist/`, purge Cloudflare cache and recheck
 - `https://aiapiops.com/openclaw-openrouter/`
 - `https://aiapiops.com/openclaw-api-key/`
 - `https://aiapiops.com/claude-code-token-cost/`
+- `https://aiapiops.com/claude-fable-5-api/`
 - `https://aiapiops.com/video-generation-api-pricing/`
 - `https://aiapiops.com/image-generation-api-pricing/`
 - `https://aiapiops.com/sitemap.xml`

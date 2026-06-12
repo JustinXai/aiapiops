@@ -36,6 +36,7 @@ This runs all checks: build, public pages count, content quality, link validatio
 - `/mcp-server-chatgpt/` — MCP Server for ChatGPT guide
 - `/mcp-registry/` — MCP Registry Trust guide
 - `/llm-observability/` — LLM Observability guide
+- `/claude-fable-5-api/` — Claude Fable 5 API setup guide
 
 ## Cloudflare Pages
 
