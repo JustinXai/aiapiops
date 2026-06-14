@@ -6,7 +6,7 @@ export const publicPages = [
       'Independent developer guides for MCP servers, OpenClaw, Claude Code, Kilo Code, image and video generation APIs, API credits, billing and LLM observability.',
     h1: 'Operate AI agents and media APIs before costs surprise you.',
     canonical: 'https://aiapiops.com/',
-    ogTitle: 'AI API Ops — MCP, Agent API Usage and LLM Observability',
+    ogTitle: 'AI API Ops - MCP, Agent API Usage and LLM Observability',
     ogDescription:
       'Independent developer guides for MCP servers, OpenClaw, Claude Code, Kilo Code, image and video generation APIs, API credits and LLM observability.',
     breadcrumb: [{ label: 'Home', url: 'https://aiapiops.com/' }],
@@ -18,7 +18,7 @@ export const publicPages = [
       'Learn what to check before connecting MCP servers to ChatGPT Apps, including API keys, tool permissions, environment variables, usage and billing risk.',
     h1: 'MCP Server for ChatGPT: What to Check Before Connecting Tools',
     canonical: 'https://aiapiops.com/mcp-server-chatgpt/',
-    ogTitle: 'MCP Server for ChatGPT — Security, API Keys and Tool Call Risks',
+    ogTitle: 'MCP Server for ChatGPT - Security, API Keys and Tool Call Risks',
     ogDescription:
       'Learn what to check before connecting MCP servers to ChatGPT Apps.',
     breadcrumb: [
@@ -33,7 +33,7 @@ export const publicPages = [
       'Understand how to review MCP Registry metadata, namespaces, publisher signals, install configuration and server trust before using MCP tools.',
     h1: 'MCP Registry Trust: What to Check Before Installing Servers',
     canonical: 'https://aiapiops.com/mcp-registry/',
-    ogTitle: 'MCP Registry Trust — Server Metadata, Namespaces and Safety Checks',
+    ogTitle: 'MCP Registry Trust - Server Metadata, Namespaces and Safety Checks',
     ogDescription: 'Understand how to review MCP Registry metadata and server trust.',
     breadcrumb: [
       { label: 'Home', url: 'https://aiapiops.com/' },
@@ -47,7 +47,7 @@ export const publicPages = [
       'Learn how LLM observability helps trace model calls, tool calls, retries, request IDs, latency, token usage and billing deltas in AI agent workflows.',
     h1: 'LLM Observability for AI Agents: What to Trace Before Scaling',
     canonical: 'https://aiapiops.com/llm-observability/',
-    ogTitle: 'LLM Observability for AI Agents — Logs, Tool Calls, Usage and Cost Signals',
+    ogTitle: 'LLM Observability for AI Agents - Logs, Tool Calls, Usage and Cost Signals',
     ogDescription:
       'Learn how LLM observability helps trace tool calls, usage, retries and billing deltas.',
     breadcrumb: [
@@ -57,14 +57,14 @@ export const publicPages = [
   },
   {
     slug: 'openclaw-openrouter',
-    title: 'OpenClaw OpenRouter: API Key and Model Routing',
+    title: 'OpenClaw OpenRouter: Base URL, Model Routing and Fallbacks',
     metaDescription:
-      'Set up OpenClaw with OpenRouter, review API credits, handle 401 and 403 errors, and check token usage before scaling agents.',
-    h1: 'OpenClaw OpenRouter: What to Check Before Running Agents',
+      'Set up OpenClaw with the OpenRouter base URL, model routing, fallback checks, API credits, and 401, 403, 404 and 429 handling before scaling.',
+    h1: 'OpenClaw OpenRouter: Base URL, Model Routing and Fallback Checks',
     canonical: 'https://aiapiops.com/openclaw-openrouter/',
-    ogTitle: 'OpenClaw OpenRouter — API Key, Model Routing and Credits',
+    ogTitle: 'OpenClaw OpenRouter - Base URL, Routing and Fallback Checks',
     ogDescription:
-      'How to set up OpenClaw with OpenRouter, configure API credits and review token usage.',
+      'How to set up OpenClaw with OpenRouter, confirm model routing, test fallback models and review token usage.',
     breadcrumb: [
       { label: 'Home', url: 'https://aiapiops.com/' },
       { label: 'Agent API', url: 'https://aiapiops.com/openclaw-openrouter/' },
@@ -74,12 +74,12 @@ export const publicPages = [
     slug: 'openclaw-api-key',
     title: 'OpenClaw API Key: Base URL, Credits and Errors',
     metaDescription:
-      'Configure an OpenClaw API key, Base URL, model routing, API credits, 401 and 403 errors, and token usage before scaling.',
+      'Configure an OpenClaw API key, Base URL, provider access, API credits, 401 and 403 errors, and token usage before scaling.',
     h1: 'OpenClaw API Key: What to Check Before Using Paid Access',
     canonical: 'https://aiapiops.com/openclaw-api-key/',
-    ogTitle: 'OpenClaw API Key — Base URL, Credits and Model Routing',
+    ogTitle: 'OpenClaw API Key - Base URL, Credits and Access Checks',
     ogDescription:
-      'Configure an OpenClaw API key safely and review credits, model routing and token usage.',
+      'Configure an OpenClaw API key safely and review credits, provider access and token usage.',
     breadcrumb: [
       { label: 'Home', url: 'https://aiapiops.com/' },
       { label: 'Agent API', url: 'https://aiapiops.com/openclaw-api-key/' },
@@ -92,7 +92,7 @@ export const publicPages = [
       'Understand what affects Claude Code token cost, including model choice, long context, tool calls, file reads, retries and automation patterns before scaling.',
     h1: 'Claude Code Token Cost: What to Check Before Scaling',
     canonical: 'https://aiapiops.com/claude-code-token-cost/',
-    ogTitle: 'Claude Code Token Cost — Model Choice, Context and Automation',
+    ogTitle: 'Claude Code Token Cost - Model Choice, Context and Automation',
     ogDescription:
       'What drives Claude Code token cost and how to review API spending before scaling.',
     breadcrumb: [
@@ -107,7 +107,7 @@ export const publicPages = [
       'Compare image generation API pricing units, edits, retries, credits and usage records before scaling image workflows with paid APIs.',
     h1: 'Image Generation API Pricing: What to Check Before Building',
     canonical: 'https://aiapiops.com/image-generation-api-pricing/',
-    ogTitle: 'Image Generation API Pricing — Official APIs, Providers and Billing Units',
+    ogTitle: 'Image Generation API Pricing - Official APIs, Providers and Billing Units',
     ogDescription:
       'Image generation API pricing, billing units, retry caveats and testing checklist.',
     breadcrumb: [
@@ -122,7 +122,7 @@ export const publicPages = [
       'Configure Claude Fable 5 API access with the model ID, endpoint checks, provider availability, authentication, tool-use cost signals, and common setup errors.',
     h1: 'Claude Fable 5 API: Model ID, Endpoint and Provider Setup',
     canonical: 'https://aiapiops.com/claude-fable-5-api/',
-    ogTitle: 'Claude Fable 5 API — Model ID, Endpoint and Provider Setup',
+    ogTitle: 'Claude Fable 5 API - Model ID, Endpoint and Provider Setup',
     ogDescription:
       'Configure Claude Fable 5 API access: model ID, endpoint, provider availability, authentication, tool-use overhead and common setup errors.',
     breadcrumb: [
@@ -137,7 +137,7 @@ export const publicPages = [
       'Understand video generation API pricing units, async workflows, polling, webhooks, failed generation cost and how to test before scaling.',
     h1: 'Video Generation API Pricing: What to Check Before Building',
     canonical: 'https://aiapiops.com/video-generation-api-pricing/',
-    ogTitle: 'Video Generation API Pricing — Async Workflows and Cost Units',
+    ogTitle: 'Video Generation API Pricing - Async Workflows and Cost Units',
     ogDescription:
       'Video generation API pricing, async jobs, polling, webhooks and testing checklist.',
     breadcrumb: [
@@ -146,4 +146,3 @@ export const publicPages = [
     ],
   },
 ];
-

@@ -13,50 +13,55 @@ import { publicPages } from '../data/pages';
 const page = publicPages.find(p => p.slug === 'openclaw-openrouter')!;
 
 const quickAnswerSteps = [
-  'Set up your OpenRouter API key and confirm the base URL.',
-  'Configure OpenClaw to use the OpenAI-compatible endpoint.',
-  'Select a model ID from the OpenRouter model catalog.',
-  'Verify credits are loaded in your OpenRouter account.',
-  'Test with a small prepaid API balance before running long workflows.',
+  'Set the OpenRouter OpenAI-compatible base URL in OpenClaw.',
+  'Choose the exact model ID and confirm the provider route.',
+  'Check fallback model behavior before long runs.',
+  'Verify credits are loaded and watch for 401, 403 and 429 errors.',
+  'Treat 404 and model unavailable responses as routing problems first.',
 ];
 
 const checklistItems = [
-  'Confirm the OpenAI-compatible base URL in OpenClaw settings.',
+  'Confirm the OpenRouter base URL in OpenClaw settings.',
   'Verify the OpenRouter API key is active and has available credits.',
-  'Check which model IDs are available in your OpenRouter tier.',
-  'Review token usage pricing for the selected model.',
-  'Set up request logging to capture request IDs and token counts.',
-  'Monitor for 401, 403, 429 and 5xx errors in early runs.',
+  'Check the exact model ID and provider route before the first run.',
+  'Review fallback routing for model unavailable responses.',
+  'Set up request logging to capture request IDs, model IDs and token counts.',
+  'Monitor for 401, 403, 404, 429 and 5xx errors in early runs.',
   'Test with a small prepaid API balance before scaling.',
 ];
 
 const evidenceItems = [
-  { label: 'OpenRouter dashboard', value: 'credits balance and model catalog' },
-  { label: 'OpenRouter /v1/models', value: 'model availability and pricing per model' },
-  { label: 'OpenClaw config', value: 'base URL and API key configuration' },
-  { label: 'Request logs', value: 'request IDs, token counts, model IDs' },
+  { label: 'OpenRouter dashboard', value: 'credits balance, route access and model catalog' },
+  { label: 'OpenRouter /v1/models', value: 'model availability, exact IDs and pricing per model' },
+  { label: 'OpenClaw config', value: 'base URL, API key and provider routing configuration' },
+  { label: 'Request logs', value: 'request IDs, token counts, model IDs and retries' },
 ];
 
 const failureModes = [
   {
-    symptom: '401 Unauthorized or 403 Forbidden on every request',
-    cause: 'Invalid API key, wrong key format, or the key does not have permission for the requested model.',
-    whatToDo: 'Verify the API key in the OpenRouter dashboard. Check that the key is active and not revoked. Confirm the model is in your subscription tier.',
+    symptom: '401 Unauthorized on every request',
+    cause: 'The API key is missing, invalid or revoked.',
+    whatToDo: 'Verify the key in the OpenRouter dashboard and confirm the header or secret path is correct.',
   },
   {
-    symptom: 'Model not found or 404 response',
-    cause: 'The model ID does not exist in OpenRouter, or the model is not available in your region.',
-    whatToDo: 'Check the OpenRouter /v1/models endpoint to confirm the exact model ID and availability for your account.',
+    symptom: '403 Forbidden on a specific model',
+    cause: 'The key is valid but the account, route or tier does not allow that model.',
+    whatToDo: 'Check the model catalog, route permissions and account tier before retrying.',
   },
   {
-    symptom: 'Rate limit or timeout errors',
-    cause: 'Too many concurrent requests, hitting the rate limit for the model tier, or network timeout.',
-    whatToDo: 'Add retry logic with exponential backoff. Check rate limit headers in responses. Consider spreading requests across time windows.',
+    symptom: '404 or model unavailable response',
+    cause: 'The model ID is stale, misspelled or not available on that route.',
+    whatToDo: 'Confirm the exact model ID in /v1/models and test a fallback model before scaling.',
+  },
+  {
+    symptom: '429 rate limit or timeout errors',
+    cause: 'Too many concurrent requests, retry loops or provider-side throttling.',
+    whatToDo: 'Reduce concurrency, add backoff and inspect rate limit headers before scaling up automation.',
   },
   {
     symptom: 'Token usage is higher than expected',
-    cause: 'Large context windows, repeated tool calls, or the model sending long completion responses.',
-    whatToDo: 'Review request logs and token counts per call. Check if OpenClaw is sending full conversation history on each turn.',
+    cause: 'Large context windows, repeated tool calls, fallback retries or long completions.',
+    whatToDo: 'Review request logs and token counts per call. Compare the first route with the fallback route to see which one is expensive.',
   },
 ];
 
@@ -88,8 +93,8 @@ const faqItems = [
 ];
 
 const relatedLinks = [
+  { label: 'OpenClaw API Key', href: '/openclaw-api-key/', desc: 'Use this for the generic key, Base URL and provider access checks.' },
   { label: 'Claude Code Token Cost', href: '/claude-code-token-cost/', desc: 'What drives token cost when using Claude through OpenRouter.' },
-  { label: 'OpenClaw API Key', href: '/openclaw-api-key/', desc: 'Configure an OpenClaw API key, Base URL, credits and error checks safely.' },
   { label: 'LLM Observability', href: '/llm-observability/', desc: 'Trace request IDs, token usage and billing signals.' },
 ];
 ---
@@ -103,21 +108,21 @@ const relatedLinks = [
   breadcrumb={page.breadcrumb}
   category="Agent API"
   h1={page.h1}
-  summary="How to set up OpenClaw with OpenRouter, configure the OpenAI-compatible endpoint, manage API credits, handle common errors and review token usage before scaling agent workflows."
+  summary="How to set up OpenClaw with OpenRouter, confirm the OpenAI-compatible endpoint, model routing, fallback behavior, API credits and common errors before scaling agent workflows."
   lastReviewed="June 2026"
   readingTime="6 min read"
   trackLabel="Agent API"
 >
   <AISummary
-    title="OpenClaw with OpenRouter requires active credits and the right model ID."
-    summary="Configure the OpenAI-compatible endpoint, verify your OpenRouter API key, check model availability, and monitor token usage. No single step guarantees error-free runs."
+    title="OpenClaw with OpenRouter depends on the right base URL, model ID and fallback path."
+    summary="Configure the OpenAI-compatible endpoint, verify your OpenRouter API key, check model availability, and separate 401, 403, 404 and 429 failures early. No single step guarantees error-free runs."
   />
 
   <QuickAnswer steps={quickAnswerSteps} />
 
   <h2>Who this is for</h2>
   <p>
-    Developers using OpenClaw as a coding agent and routing requests through OpenRouter for access to multiple models. If you are connecting OpenClaw to an OpenAI-compatible provider for the first time, this guide helps you set up credentials and review costs.
+    Developers using OpenClaw as a coding agent and routing requests through OpenRouter for access to multiple models. If you are comparing routes, choosing a fallback model or checking why one provider path fails while another works, this guide is for you.
   </p>
 
   <h2>What OpenClaw and OpenRouter do</h2>
@@ -133,7 +138,7 @@ const relatedLinks = [
 
   <RutaCta />
 
-  <h2>API key, base URL, model ID and OpenAI-compatible workflow</h2>
+  <h2>OpenRouter base URL, model ID and routing</h2>
   <p>
     OpenClaw connects to OpenRouter using an OpenAI-compatible endpoint. The key configuration points are:
   </p>
@@ -141,20 +146,28 @@ const relatedLinks = [
     <li><strong>Base URL:</strong> Set to <code>https://openrouter.ai/api/v1</code> in OpenClaw settings.</li>
     <li><strong>API key:</strong> Your OpenRouter API key, loaded from environment variables or a config file.</li>
     <li><strong>Model ID:</strong> A string from the OpenRouter model catalog, for example <code>anthropic/claude-3-5-sonnet</code> or <code>openai/gpt-4o</code>.</li>
-    <li><strong>Credits:</strong> OpenRouter credits must be loaded in your account before OpenClaw can make requests.</li>
+    <li><strong>Routing:</strong> The model ID decides which underlying provider route OpenRouter uses for each request.</li>
   </ul>
   <p>
-    Confirm the base URL and API key are set correctly in your OpenClaw configuration file before running any workflows. OpenRouter does not support OpenAI-specific endpoints like assistants or fine-tuning — only chat completions.
+    Confirm the base URL and API key are set correctly in your OpenClaw configuration file before running any workflows. OpenRouter does not support OpenAI-specific endpoints like assistants or fine-tuning - only chat completions.
   </p>
 
   <Checklist title="OpenClaw OpenRouter setup checklist" items={checklistItems} />
 
-  <h2>Common errors: 401, 403, no credits, model not found, rate limits, timeout</h2>
+  <h2>Common errors: 401, 403, 404, 429, no credits, model unavailable</h2>
   <p>
     These are the most common failure modes when OpenClaw is configured with OpenRouter:
   </p>
 
   <FailureModes modes={failureModes} />
+
+  <h2>Fallback routing and model unavailable responses</h2>
+  <p>
+    When a model is unavailable, the important question is whether OpenClaw should retry the same route or switch to a fallback model. If the model ID is wrong, a 404-style error usually points to routing or catalog mismatch. If the route exists but the account lacks access, the problem is closer to permissions or balance. Check the exact failure before changing models.
+  </p>
+  <p>
+    Keep a short fallback list with model IDs that are available in the same account tier. That makes it easier to separate routing failures from account-level limits during early tests.
+  </p>
 
   <h2>Why token usage can spike</h2>
   <p>
